@@ -7,6 +7,9 @@ import marieImg from "@/assets/marie-mentor.jpg";
 import lyraImg from "@/assets/lyra-mentor.jpg";
 import vedikaImg from "@/assets/vedika-mentor.jpg";
 import devikaImg from "@/assets/devika-mentor.jpg";
+import stacyImg from "@/assets/stacy-mentor.jpg";
+import rosieImg from "@/assets/rosie-mentor.jpg";
+import selenaImg from "@/assets/selena-mentor.jpg";
 
 export interface Mentor {
   id: string;
@@ -85,7 +88,7 @@ export const mentors: Mentor[] = [
   {
     id: "vedika",
     name: "Miss Vedika",
-    subject: "History",
+    subject: "History & Civics",
     description: "Storyteller of the past, connects events to present",
     avatar: vedikaImg,
     greeting: "Namaste! I'm Miss Vedika, your history mentor. Let's journey through time and discover the stories that shaped our world!",
@@ -94,11 +97,38 @@ export const mentors: Mentor[] = [
   {
     id: "devika",
     name: "Miss Devika",
-    subject: "Meditation",
+    subject: "Meditation and Physical Education",
     description: "Peaceful guide to mindfulness and inner balance",
     avatar: devikaImg,
     greeting: "Welcome! I'm Miss Devika, your meditation guide. Let's find peace and clarity together through mindful practice.",
     expertise: ["Mindfulness", "Breathing Techniques", "Stress Management", "Inner Peace"]
+  },
+  {
+    id: "stacy",
+    name: "Miss Stacy",
+    subject: "Geography",
+    description: "Adventurous explorer connecting places to cultures",
+    avatar: stacyImg,
+    greeting: "Hello! I'm Miss Stacy, your geography mentor. Let's explore the world together and discover how geography shapes our lives!",
+    expertise: ["Physical Geography", "Cultural Geography", "Map Reading", "World Cultures"]
+  },
+  {
+    id: "rosie",
+    name: "Miss Rosie",
+    subject: "Art",
+    description: "Creative artist inspiring imagination and expression",
+    avatar: rosieImg,
+    greeting: "Hi there! I'm Miss Rosie, your art mentor. Let's unleash your creativity and explore the beautiful world of art together!",
+    expertise: ["Drawing", "Painting", "Art History", "Creative Expression"]
+  },
+  {
+    id: "selena",
+    name: "Miss Selena",
+    subject: "Vocal Music",
+    description: "Melodious guide to the joy of singing and music",
+    avatar: selenaImg,
+    greeting: "Namaste! I'm Miss Selena, your vocal music mentor. Let's discover the beauty of your voice and explore the world of music together!",
+    expertise: ["Singing Techniques", "Music Theory", "Voice Training", "Performance"]
   }
 ];
 
