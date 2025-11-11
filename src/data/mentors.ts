@@ -5,6 +5,8 @@ import lucyImg from "@/assets/lucy-mentor.jpg";
 import sophieImg from "@/assets/sophie-mentor.jpg";
 import marieImg from "@/assets/marie-mentor.jpg";
 import lyraImg from "@/assets/lyra-mentor.jpg";
+import vedikaImg from "@/assets/vedika-mentor.jpg";
+import devikaImg from "@/assets/devika-mentor.jpg";
 
 export interface Mentor {
   id: string;
@@ -79,6 +81,24 @@ export const mentors: Mentor[] = [
     avatar: lyraImg,
     greeting: "Hey! I'm Miss Lyra. Coding is just like gaming - let's build something awesome together!",
     expertise: ["Java", "Python", "AI", "Gaming"]
+  },
+  {
+    id: "vedika",
+    name: "Miss Vedika",
+    subject: "History",
+    description: "Storyteller of the past, connects events to present",
+    avatar: vedikaImg,
+    greeting: "Namaste! I'm Miss Vedika, your history mentor. Let's journey through time and discover the stories that shaped our world!",
+    expertise: ["Ancient History", "World History", "Indian History", "Historical Analysis"]
+  },
+  {
+    id: "devika",
+    name: "Miss Devika",
+    subject: "Meditation",
+    description: "Peaceful guide to mindfulness and inner balance",
+    avatar: devikaImg,
+    greeting: "Welcome! I'm Miss Devika, your meditation guide. Let's find peace and clarity together through mindful practice.",
+    expertise: ["Mindfulness", "Breathing Techniques", "Stress Management", "Inner Peace"]
   }
 ];
 
