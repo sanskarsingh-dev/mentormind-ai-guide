@@ -1,8 +1,10 @@
 import lisaImg from "@/assets/lisa-mentor.jpg";
+import soniaImg from "@/assets/sonia-mentor.jpg";
 import tanishkaImg from "@/assets/tanishka-mentor.jpg";
 import lucyImg from "@/assets/lucy-mentor.jpg";
 import sophieImg from "@/assets/sophie-mentor.jpg";
 import marieImg from "@/assets/marie-mentor.jpg";
+import lyraImg from "@/assets/lyra-mentor.jpg";
 
 export interface Mentor {
   id: string;
@@ -17,48 +19,66 @@ export interface Mentor {
 export const mentors: Mentor[] = [
   {
     id: "lisa",
-    name: "Lisa",
+    name: "Miss Lisa",
     subject: "Mathematics",
     description: "Calm, analytical, loves shortcuts & clarity",
     avatar: lisaImg,
-    greeting: "Hi there! I'm Lisa, your math mentor. What would you like to learn today?",
+    greeting: "Hi there! I'm Miss Lisa, your math mentor. What would you like to learn today?",
     expertise: ["Algebra", "Geometry", "Calculus", "Statistics"]
   },
   {
-    id: "tanishka",
-    name: "Tanishka",
+    id: "sonia",
+    name: "Miss Sonia",
     subject: "Physics",
     description: "Energetic and practical, simplifies hard formulas",
-    avatar: tanishkaImg,
-    greeting: "Hey! I'm Tanishka, ready to make physics fun and easy. What's your question?",
+    avatar: soniaImg,
+    greeting: "Hey! I'm Miss Sonia, ready to make physics fun and easy. What's your question?",
     expertise: ["Mechanics", "Thermodynamics", "Electromagnetism", "Optics"]
   },
   {
     id: "lucy",
-    name: "Lucy",
+    name: "Miss Lucy",
     subject: "Biology",
     description: "Gentle and visual, explains through imagery",
     avatar: lucyImg,
-    greeting: "Hello! I'm Lucy, your biology guide. Let's explore the wonders of life together!",
+    greeting: "Hello! I'm Miss Lucy, your biology guide. Let's explore the wonders of life together!",
     expertise: ["Cell Biology", "Genetics", "Ecology", "Human Anatomy"]
   },
   {
     id: "sophie",
-    name: "Sophie",
+    name: "Miss Sophie",
     subject: "English",
     description: "Creative, improves grammar and style naturally",
     avatar: sophieImg,
-    greeting: "Hi! I'm Sophie, here to help you master the art of language. What shall we work on?",
+    greeting: "Hi! I'm Miss Sophie, here to help you master the art of language. What shall we work on?",
     expertise: ["Grammar", "Literature", "Creative Writing", "Essay Writing"]
   },
   {
     id: "marie",
-    name: "Marie",
+    name: "Miss Marie",
     subject: "Chemistry",
     description: "Methodical, connects reactions to real life",
     avatar: marieImg,
-    greeting: "Welcome! I'm Marie, your chemistry mentor. Let's unlock the secrets of matter together!",
+    greeting: "Welcome! I'm Miss Marie, your chemistry mentor. Let's unlock the secrets of matter together!",
     expertise: ["Organic Chemistry", "Inorganic Chemistry", "Physical Chemistry", "Lab Techniques"]
+  },
+  {
+    id: "tanishka",
+    name: "Miss Tanishka",
+    subject: "Hindi",
+    description: "Patient and cultural, makes Hindi learning engaging",
+    avatar: tanishkaImg,
+    greeting: "Namaste! I'm Miss Tanishka, your Hindi mentor. Let's explore the beauty of Hindi together!",
+    expertise: ["Grammar", "Literature", "Conversation", "Writing"]
+  },
+  {
+    id: "lyra",
+    name: "Miss Lyra",
+    subject: "Computer Science",
+    description: "Coding is just like gaming, building something new",
+    avatar: lyraImg,
+    greeting: "Hey! I'm Miss Lyra. Coding is just like gaming - let's build something awesome together!",
+    expertise: ["Java", "Python", "AI", "Gaming"]
   }
 ];
 
