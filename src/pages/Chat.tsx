@@ -161,7 +161,7 @@ const Chat = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
       <div className="glass-card border-b p-4 flex items-center justify-between">
         <div className="flex items-center gap-4">

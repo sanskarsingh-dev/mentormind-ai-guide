@@ -8,6 +8,11 @@ import Dashboard from "./pages/Dashboard";
 import SubjectSelection from "./pages/SubjectSelection";
 import MentorIntro from "./pages/MentorIntro";
 import Chat from "./pages/Chat";
+import Calendar from "./pages/Calendar";
+import Analytics from "./pages/Analytics";
+import Profile from "./pages/Profile";
+import Notifications from "./pages/Notifications";
+import QuizGenerator from "./pages/QuizGenerator";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +29,11 @@ const App = () => (
           <Route path="/subjects" element={<SubjectSelection />} />
           <Route path="/mentor/:mentorId" element={<MentorIntro />} />
           <Route path="/chat/:mentorId" element={<Chat />} />
+          <Route path="/calendar" element={<Calendar />} />
+          <Route path="/analytics" element={<Analytics />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/notifications" element={<Notifications />} />
+          <Route path="/quiz" element={<QuizGenerator />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

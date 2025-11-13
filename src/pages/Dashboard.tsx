@@ -110,7 +110,7 @@ const Dashboard = () => {
               Get instant answers from AI mentors
             </p>
             <Button 
-              onClick={() => navigate("/live-chat")}
+              onClick={() => navigate("/subjects")}
               className="w-full bg-gradient-to-r from-secondary to-accent hover:opacity-90"
             >
               Ask Doubt
@@ -164,7 +164,7 @@ const Dashboard = () => {
               Challenge yourself with AI-generated quizzes
             </p>
             <Button 
-              onClick={() => navigate("/create-quiz")}
+              onClick={() => navigate("/quiz")}
               className="w-full bg-gradient-to-r from-primary to-secondary hover:opacity-90"
             >
               Create a Quiz
@@ -193,7 +193,7 @@ const Dashboard = () => {
             
             <Button 
               className="w-14 h-14 rounded-full bg-gradient-to-r from-primary via-secondary to-accent shadow-glow -mt-8"
-              onClick={() => navigate("/live-chat")}
+              onClick={() => navigate("/subjects")}
             >
               <MessageCircle className="h-6 w-6" />
             </Button>

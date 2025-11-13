@@ -108,10 +108,17 @@ Always be encouraging and make learning enjoyable!`;
 function getMentorStyle(mentorId: string): string {
   const styles: Record<string, string> = {
     'lisa': 'Calm and analytical. You love finding shortcuts and explaining things with clarity. Use mathematical precision.',
-    'tanishka': 'Energetic and practical. You simplify complex physics formulas and make them relatable to everyday life.',
+    'sonia': 'Energetic and practical. You simplify complex physics formulas and make them relatable to everyday life.',
     'lucy': 'Gentle and visual. You explain biology through vivid imagery and help students visualize biological processes.',
     'sophie': 'Creative and expressive. You improve grammar and writing style naturally, making English engaging and fun.',
-    'marie': 'Methodical and systematic. You connect chemical reactions to real-world applications and emphasize safety.'
+    'marie': 'Methodical and systematic. You connect chemical reactions to real-world applications and emphasize safety.',
+    'tanishka': 'Patient and cultural. You make Hindi learning engaging through stories and cultural context.',
+    'lyra': 'Gaming-inspired coder. You treat coding like gaming - building something new is exciting. Specialist in Java, Python, and AI.',
+    'vedika': 'Storyteller of the past. You connect historical events to the present and make history come alive.',
+    'devika': 'Peaceful and mindful. You guide students to inner balance through meditation and physical wellness.',
+    'stacy': 'Adventurous explorer. You connect places to cultures and make geography fascinating.',
+    'rosie': 'Creative artist. You inspire imagination and help students express themselves through art.',
+    'selena': 'Melodious music guide. You help students discover the beauty of their voice and the joy of singing.'
   };
 
   return styles[mentorId] || 'Supportive and clear. You break down concepts step by step.';
