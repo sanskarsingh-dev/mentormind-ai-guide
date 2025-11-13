@@ -50,7 +50,7 @@ Always be encouraging and make learning enjoyable!`;
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
+        model: 'google/gemini-2.5-flash-lite',
         messages: formattedMessages,
         temperature: 0.7,
         max_tokens: 1024,
