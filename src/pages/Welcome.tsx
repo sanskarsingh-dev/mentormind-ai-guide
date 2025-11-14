@@ -1,66 +1,56 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import heroBubble from "@/assets/hero-bubble.jpg";
+import { Sparkles } from "lucide-react";
 
 const Welcome = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 p-6">
-      <div className="text-center space-y-8 max-w-2xl">
-        {/* Hero Bubble */}
-        <div className="relative w-64 h-64 mx-auto mb-8 animate-fade-in">
-          <img 
-            src={heroBubble} 
-            alt="MentorMind" 
-            className="w-full h-full object-contain drop-shadow-2xl animate-pulse"
-          />
-        </div>
-
-        {/* Title */}
-        <div className="space-y-4">
-          <h1 className="text-6xl font-bold gradient-text">
-            MentorMind
-          </h1>
-          <p className="text-xl text-muted-foreground">
-            AI-powered learning assistants for every subject
-          </p>
-        </div>
-
-        {/* Welcome Message */}
-        <div className="glass-card rounded-3xl p-8 space-y-4 animate-fade-in">
-          <h2 className="text-2xl font-semibold text-foreground">
-            Welcome to MentorMind! 👋
-          </h2>
-          <p className="text-lg text-muted-foreground">
-            Which subject would you like to study today?
-          </p>
-        </div>
-
-        {/* Get Started Button */}
-        <Button
-          onClick={() => navigate("/subjects")}
-          size="lg"
-          className="text-lg px-12 py-6 rounded-full glass-card-hover shadow-glow bg-gradient-to-r from-purple-500 via-blue-500 to-pink-500 hover:opacity-90"
-        >
-          Get Started
-        </Button>
-
-        {/* Stats */}
-        <div className="flex justify-center gap-8 text-sm text-muted-foreground pt-4">
-          <div>
-            <span className="font-semibold text-foreground">5</span> Expert Mentors
+    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-background via-secondary/30 to-accent/20">
+      {/* Animated background bubbles */}
+      <div className="bubble-effect absolute inset-0" />
+      
+      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-6">
+        <div className="text-center space-y-8 max-w-md">
+          {/* Animated logo/bubble */}
+          <div className="relative mx-auto w-48 h-48 animate-in zoom-in-50 duration-700">
+            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary/20 via-accent/30 to-primary/20 blur-2xl animate-pulse" />
+            <div className="relative w-full h-full rounded-full bg-gradient-to-br from-primary via-accent to-primary/80 shadow-glow flex items-center justify-center">
+              <Sparkles className="w-20 h-20 text-primary-foreground animate-pulse" />
+            </div>
           </div>
-          <div>•</div>
-          <div>
-            <span className="font-semibold text-foreground">24/7</span> Available
+
+          {/* Title */}
+          <div className="space-y-3 animate-in fade-in-50 slide-in-from-bottom-4 duration-700 delay-100">
+            <h1 className="text-5xl font-bold gradient-text">Luna AI</h1>
+            <p className="text-muted-foreground text-lg leading-relaxed">
+              AI tutor has the power to transform the way you learn
+            </p>
           </div>
-          <div>•</div>
-          <div>
-            <span className="font-semibold text-foreground">∞</span> Questions
+
+          {/* CTA Buttons */}
+          <div className="flex flex-col gap-3 pt-4 animate-in fade-in-50 slide-in-from-bottom-6 duration-700 delay-200">
+            <Button
+              size="lg"
+              onClick={() => navigate("/dashboard")}
+              className="rounded-full w-full py-6 text-lg font-semibold bg-gradient-to-r from-primary to-accent hover:shadow-glow transition-all duration-300 hover:scale-105"
+            >
+              Sign In
+            </Button>
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={() => navigate("/dashboard")}
+              className="rounded-full w-full py-6 text-lg font-semibold border-2 bg-background/50 backdrop-blur-sm hover:bg-secondary/50 transition-all duration-300"
+            >
+              Get Started
+            </Button>
           </div>
         </div>
       </div>
+
+      {/* Bottom indicator */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-32 h-1 bg-foreground/20 rounded-full" />
     </div>
   );
 };

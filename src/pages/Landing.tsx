@@ -1,75 +1,91 @@
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { AuthModal } from "@/components/AuthModal";
+import { Sparkles, GraduationCap, MessageSquare, Brain } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import heroBubble from "@/assets/hero-bubble.jpg";
 
 const Landing = () => {
-  const [showAuthModal, setShowAuthModal] = useState(false);
+  const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-background via-primary/5 to-secondary/5 p-6 relative">
-      {/* Theme Toggle */}
-      <div className="absolute top-6 right-6">
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Animated gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-background via-secondary/20 to-accent/20">
+        <div className="bubble-effect absolute inset-0" />
+      </div>
+
+      {/* Floating bubble decoration */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] rounded-full bg-gradient-to-br from-primary/30 via-accent/20 to-transparent blur-3xl animate-pulse" />
+      
+      <div className="absolute top-4 right-4 z-10">
         <ThemeToggle />
       </div>
 
-      <div className="text-center space-y-8 max-w-2xl">
-        {/* Hero Bubble */}
-        <div className="relative w-64 h-64 mx-auto mb-8 animate-fade-in">
-          <img 
-            src={heroBubble} 
-            alt="MentorMind" 
-            className="w-full h-full object-contain drop-shadow-2xl animate-pulse"
-          />
+      {/* Content */}
+      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-6 text-center space-y-8">
+        {/* Logo/Icon */}
+        <div className="relative">
+          <div className="w-32 h-32 rounded-full bg-gradient-to-br from-primary via-accent to-primary/80 flex items-center justify-center shadow-glow animate-in zoom-in-50 duration-700">
+            <GraduationCap className="w-16 h-16 text-primary-foreground" strokeWidth={1.5} />
+          </div>
+          <div className="absolute -top-2 -right-2 w-12 h-12 rounded-full bg-accent/80 flex items-center justify-center animate-bounce">
+            <Sparkles className="w-6 h-6 text-accent-foreground" />
+          </div>
         </div>
 
         {/* Title */}
-        <div className="space-y-4">
-          <h1 className="text-6xl font-bold gradient-text">
-            MentorMind
+        <div className="space-y-4 animate-in fade-in-50 slide-in-from-bottom-4 duration-700 delay-100">
+          <h1 className="text-6xl md:text-7xl font-bold gradient-text">
+            Luna AI
           </h1>
-          <p className="text-xl text-muted-foreground">
-            AI-powered learning assistants for every subject
+          <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            AI tutor has the power to transform the way you learn
           </p>
         </div>
 
-        {/* Welcome Message */}
-        <div className="glass-card rounded-3xl p-8 space-y-4 animate-fade-in backdrop-blur-glass border-2 border-primary/20">
-          <h2 className="text-2xl font-semibold text-foreground">
-            Welcome to MentorMind! 👋
-          </h2>
-          <p className="text-lg text-muted-foreground">
-            Your personal AI learning companion
-          </p>
-        </div>
-
-        {/* Get Started Button */}
-        <Button
-          onClick={() => setShowAuthModal(true)}
-          size="lg"
-          className="text-lg px-12 py-6 rounded-full shadow-glow bg-gradient-to-r from-primary via-secondary to-accent hover:opacity-90 transition-all duration-300 hover:scale-105"
-        >
-          Get Started
-        </Button>
-
-        {/* Stats */}
-        <div className="flex justify-center gap-8 text-sm text-muted-foreground pt-4">
-          <div>
-            <span className="font-semibold text-foreground">12</span> Expert Mentors
+        {/* Features */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-3xl animate-in fade-in-50 slide-in-from-bottom-6 duration-700 delay-200">
+          <div className="glass-card rounded-3xl p-6 space-y-2 hover:scale-105 transition-transform duration-300">
+            <Brain className="w-8 h-8 text-primary mx-auto" />
+            <h3 className="font-semibold text-foreground">Smart Learning</h3>
+            <p className="text-sm text-muted-foreground">Personalized AI mentors</p>
           </div>
-          <div>•</div>
-          <div>
-            <span className="font-semibold text-foreground">24/7</span> Available
+          <div className="glass-card rounded-3xl p-6 space-y-2 hover:scale-105 transition-transform duration-300">
+            <MessageSquare className="w-8 h-8 text-accent mx-auto" />
+            <h3 className="font-semibold text-foreground">Chat Anytime</h3>
+            <p className="text-sm text-muted-foreground">24/7 instant help</p>
           </div>
-          <div>•</div>
-          <div>
-            <span className="font-semibold text-foreground">∞</span> Questions
+          <div className="glass-card rounded-3xl p-6 space-y-2 hover:scale-105 transition-transform duration-300">
+            <Sparkles className="w-8 h-8 text-primary mx-auto" />
+            <h3 className="font-semibold text-foreground">Quiz Master</h3>
+            <p className="text-sm text-muted-foreground">Test your knowledge</p>
           </div>
         </div>
+
+        {/* CTA Buttons */}
+        <div className="flex flex-col sm:flex-row gap-4 pt-4 animate-in fade-in-50 slide-in-from-bottom-8 duration-700 delay-300">
+          <Button
+            size="lg"
+            onClick={() => navigate("/dashboard")}
+            className="rounded-full px-8 py-6 text-lg font-semibold bg-gradient-to-r from-primary to-accent hover:shadow-glow transition-all duration-300 hover:scale-105"
+          >
+            Get Started
+            <Sparkles className="w-5 h-5 ml-2" />
+          </Button>
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={() => navigate("/dashboard")}
+            className="rounded-full px-8 py-6 text-lg font-semibold border-2 hover:bg-secondary/50 transition-all duration-300"
+          >
+            Sign In
+          </Button>
+        </div>
+
+        {/* Bottom tagline */}
+        <p className="text-sm text-muted-foreground animate-in fade-in-50 duration-700 delay-500">
+          Make anything you want, whenever you want
+        </p>
       </div>
-
-      <AuthModal open={showAuthModal} onOpenChange={setShowAuthModal} />
     </div>
   );
 };
