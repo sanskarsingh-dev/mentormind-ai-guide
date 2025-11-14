@@ -1,29 +1,22 @@
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ArrowLeft, Bell } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { BottomNav } from "@/components/BottomNav";
+import { Bell } from "lucide-react";
 
 const Notifications = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-4xl mx-auto space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5 pb-24">
+      <div className="max-w-4xl mx-auto p-6 space-y-6">
         <div className="flex items-center justify-between">
-          <Button
-            variant="ghost"
-            onClick={() => navigate("/dashboard")}
-            className="gap-2"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back
-          </Button>
+          <h1 className="text-3xl font-bold gradient-text">Notifications</h1>
+          <ThemeToggle />
         </div>
 
-        <h1 className="text-4xl font-bold gradient-text">Notifications</h1>
-
-        <Card className="glass-card rounded-3xl p-12 text-center space-y-6">
-          <div className="w-24 h-24 rounded-full bg-gradient-to-br from-purple-500 via-blue-500 to-pink-500 flex items-center justify-center mx-auto">
+        <Card className="glass-card backdrop-blur-xl rounded-3xl p-12 text-center space-y-6 border-2 border-primary/20">
+          <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center mx-auto">
             <Bell className="w-12 h-12 text-white" />
           </div>
           <div className="space-y-2">
@@ -34,6 +27,8 @@ const Notifications = () => {
           </div>
         </Card>
       </div>
+
+      <BottomNav />
     </div>
   );
 };

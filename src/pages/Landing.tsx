@@ -1,10 +1,13 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sparkles, GraduationCap, MessageSquare, Brain } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { AuthModal } from "@/components/AuthModal";
 
 const Landing = () => {
   const navigate = useNavigate();
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   return (
     <div className="min-h-screen relative overflow-hidden">
@@ -61,31 +64,25 @@ const Landing = () => {
           </div>
         </div>
 
-        {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 pt-4 animate-in fade-in-50 slide-in-from-bottom-8 duration-700 delay-300">
+        {/* CTA Button */}
+        <div className="pt-4 animate-in fade-in-50 slide-in-from-bottom-8 duration-700 delay-300">
           <Button
             size="lg"
-            onClick={() => navigate("/dashboard")}
-            className="rounded-full px-8 py-6 text-lg font-semibold bg-gradient-to-r from-primary to-accent hover:shadow-glow transition-all duration-300 hover:scale-105"
+            onClick={() => setShowAuthModal(true)}
+            className="rounded-full px-12 py-6 text-lg font-semibold bg-gradient-to-r from-primary to-accent hover:shadow-glow transition-all duration-300 hover:scale-105"
           >
             Get Started
             <Sparkles className="w-5 h-5 ml-2" />
-          </Button>
-          <Button
-            variant="outline"
-            size="lg"
-            onClick={() => navigate("/dashboard")}
-            className="rounded-full px-8 py-6 text-lg font-semibold border-2 hover:bg-secondary/50 transition-all duration-300"
-          >
-            Sign In
           </Button>
         </div>
 
         {/* Bottom tagline */}
         <p className="text-sm text-muted-foreground animate-in fade-in-50 duration-700 delay-500">
-          Make anything you want, whenever you want
+          Your personalized AI learning companion
         </p>
       </div>
+
+      <AuthModal open={showAuthModal} onOpenChange={setShowAuthModal} />
     </div>
   );
 };

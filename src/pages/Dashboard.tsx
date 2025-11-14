@@ -1,7 +1,8 @@
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { BottomNav } from "@/components/BottomNav";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Bell, BookOpen, MessageCircle, Brain, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -13,19 +14,39 @@ import sophieImg from "@/assets/sophie-mentor.jpg";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-
   const mentorImages = [lisaImg, soniaImg, lucyImg, sophieImg];
+  
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good Morning";
+    if (hour < 18) return "Good Afternoon";
+    return "Good Evening";
+  };
+
+  const getCurrentDate = () => {
+    return new Date().toLocaleDateString('en-US', { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-secondary/5">
+    <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5 pb-24">
       {/* Top Bar */}
-      <div className="sticky top-0 z-50 backdrop-blur-glass bg-background/80 border-b border-border">
+      <div className="sticky top-0 z-50 backdrop-blur-xl bg-background/80 border-b border-border/50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-bold">
-              U
+            <Avatar className="h-12 w-12 border-2 border-primary">
+              <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-white font-bold">
+                U
+              </AvatarFallback>
+            </Avatar>
+            <div>
+              <p className="font-semibold text-foreground">{getGreeting()}</p>
+              <p className="text-xs text-muted-foreground">{getCurrentDate()}</p>
             </div>
-            <span className="font-semibold text-foreground">Guest User</span>
           </div>
           
           <div className="flex items-center gap-2">
@@ -33,7 +54,7 @@ const Dashboard = () => {
               variant="ghost" 
               size="icon"
               onClick={() => navigate("/notifications")}
-              className="rounded-full"
+              className="rounded-full relative"
             >
               <Bell className="h-5 w-5" />
             </Button>
@@ -174,46 +195,7 @@ const Dashboard = () => {
       </div>
 
       {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 backdrop-blur-glass bg-background/90 border-t border-border">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-around py-3">
-            <Button variant="ghost" className="flex flex-col items-center gap-1" onClick={() => navigate("/dashboard")}>
-              <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
-                <span className="text-primary">🏠</span>
-              </div>
-              <span className="text-xs text-primary font-semibold">Home</span>
-            </Button>
-            
-            <Button variant="ghost" className="flex flex-col items-center gap-1" onClick={() => navigate("/calendar")}>
-              <div className="w-8 h-8 rounded-full flex items-center justify-center">
-                <span>📅</span>
-              </div>
-              <span className="text-xs text-muted-foreground">Calendar</span>
-            </Button>
-            
-            <Button 
-              className="w-14 h-14 rounded-full bg-gradient-to-r from-primary via-secondary to-accent shadow-glow -mt-8"
-              onClick={() => navigate("/subjects")}
-            >
-              <MessageCircle className="h-6 w-6" />
-            </Button>
-            
-            <Button variant="ghost" className="flex flex-col items-center gap-1" onClick={() => navigate("/analytics")}>
-              <div className="w-8 h-8 rounded-full flex items-center justify-center">
-                <span>📊</span>
-              </div>
-              <span className="text-xs text-muted-foreground">Analytics</span>
-            </Button>
-            
-            <Button variant="ghost" className="flex flex-col items-center gap-1" onClick={() => navigate("/profile")}>
-              <div className="w-8 h-8 rounded-full flex items-center justify-center">
-                <span>👤</span>
-              </div>
-              <span className="text-xs text-muted-foreground">Profile</span>
-            </Button>
-          </div>
-        </div>
-      </div>
+      <BottomNav />
     </div>
   );
 };

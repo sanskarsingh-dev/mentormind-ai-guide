@@ -1,7 +1,8 @@
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ArrowLeft, BookOpen, Clock, Award, TrendingUp } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { BottomNav } from "@/components/BottomNav";
+import { BookOpen, Clock, Award, TrendingUp } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 
 const Analytics = () => {
@@ -27,60 +28,52 @@ const Analytics = () => {
   const maxHours = Math.max(...weeklyData.map(d => d.hours));
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-6xl mx-auto space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5 pb-24">
+      <div className="max-w-6xl mx-auto p-6 space-y-6">
         <div className="flex items-center justify-between">
-          <Button
-            variant="ghost"
-            onClick={() => navigate("/dashboard")}
-            className="gap-2"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back
-          </Button>
+          <h1 className="text-3xl font-bold gradient-text">Your Analytics</h1>
+          <ThemeToggle />
         </div>
 
-        <h1 className="text-4xl font-bold gradient-text">Your Analytics</h1>
-
         {/* Overview Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="glass-card rounded-3xl p-6 space-y-3">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
-              <BookOpen className="w-6 h-6 text-white" />
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <Card className="glass-card backdrop-blur-xl rounded-2xl p-5 space-y-2 border-2 border-primary/20">
+            <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+              <BookOpen className="w-5 h-5 text-white" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Subjects Studied</p>
-              <p className="text-3xl font-bold gradient-text">8</p>
+              <p className="text-xs text-muted-foreground">Subjects</p>
+              <p className="text-2xl font-bold gradient-text">3</p>
             </div>
           </Card>
 
-          <Card className="glass-card rounded-3xl p-6 space-y-3">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-              <Clock className="w-6 h-6 text-white" />
+          <Card className="glass-card backdrop-blur-xl rounded-2xl p-5 space-y-2 border-2 border-accent/20">
+            <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-accent to-primary flex items-center justify-center">
+              <Clock className="w-5 h-5 text-white" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Total Hours</p>
-              <p className="text-3xl font-bold gradient-text">36</p>
+              <p className="text-xs text-muted-foreground">Hours</p>
+              <p className="text-2xl font-bold gradient-text">2.5</p>
             </div>
           </Card>
 
-          <Card className="glass-card rounded-3xl p-6 space-y-3">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center">
-              <Award className="w-6 h-6 text-white" />
+          <Card className="glass-card backdrop-blur-xl rounded-2xl p-5 space-y-2 border-2 border-primary/20">
+            <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+              <Award className="w-5 h-5 text-white" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Quizzes Taken</p>
-              <p className="text-3xl font-bold gradient-text">12</p>
+              <p className="text-xs text-muted-foreground">Quizzes</p>
+              <p className="text-2xl font-bold gradient-text">5</p>
             </div>
           </Card>
 
-          <Card className="glass-card rounded-3xl p-6 space-y-3">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center">
-              <TrendingUp className="w-6 h-6 text-white" />
+          <Card className="glass-card backdrop-blur-xl rounded-2xl p-5 space-y-2 border-2 border-accent/20">
+            <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-accent to-primary flex items-center justify-center">
+              <TrendingUp className="w-5 h-5 text-white" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Avg Score</p>
-              <p className="text-3xl font-bold gradient-text">85%</p>
+              <p className="text-xs text-muted-foreground">Avg Score</p>
+              <p className="text-2xl font-bold gradient-text">85%</p>
             </div>
           </Card>
         </div>
@@ -103,22 +96,28 @@ const Analytics = () => {
         </Card>
 
         {/* Subject Progress */}
-        <Card className="glass-card rounded-3xl p-8 space-y-6">
-          <h2 className="text-2xl font-bold gradient-text">Subject Progress</h2>
-          <div className="space-y-6">
+        <Card className="glass-card backdrop-blur-xl rounded-3xl p-6 space-y-6 border-2 border-primary/20">
+          <h2 className="text-xl font-bold gradient-text">Subject Progress</h2>
+          <div className="space-y-5">
             {subjects.map((subject) => (
               <div key={subject.name} className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="font-semibold">{subject.name}</span>
-                  <span className="text-sm text-muted-foreground">{subject.hours} hours</span>
+                  <span className="font-semibold text-sm">{subject.name}</span>
+                  <span className="text-xs text-muted-foreground">{subject.hours}h</span>
                 </div>
-                <Progress value={subject.progress} className="h-3" />
-                <p className="text-xs text-muted-foreground text-right">{subject.progress}% complete</p>
+                <Progress value={subject.progress} className="h-2" />
+                <div className="flex items-center justify-end">
+                  <span className="text-xs font-semibold gradient-text">
+                    {subject.progress}%
+                  </span>
+                </div>
               </div>
             ))}
           </div>
         </Card>
       </div>
+
+      <BottomNav />
     </div>
   );
 };
