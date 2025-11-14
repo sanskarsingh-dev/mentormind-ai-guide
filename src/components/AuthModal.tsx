@@ -34,10 +34,10 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-md glass-card border-2 border-primary/20">
+        <DialogContent className="sm:max-w-md glass-card backdrop-blur-xl border-2 border-primary/20">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-center">Welcome to MentorMind</DialogTitle>
-            <DialogDescription className="text-center">
+            <DialogTitle className="text-2xl font-bold text-center gradient-text">Welcome to Luna AI</DialogTitle>
+            <DialogDescription className="text-center text-muted-foreground">
               Sign in to save your progress and access all features
             </DialogDescription>
           </DialogHeader>
@@ -45,7 +45,7 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
           <div className="space-y-4 py-4">
             <Button
               onClick={handleGoogleSignIn}
-              className="w-full h-12 text-base bg-white hover:bg-gray-50 text-gray-800 border border-gray-300"
+              className="w-full h-12 text-base bg-card hover:bg-accent text-foreground border-2 border-border"
             >
               <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -76,15 +76,18 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
       </Dialog>
 
       <AlertDialog open={showGuestDisclaimer} onOpenChange={setShowGuestDisclaimer}>
-        <AlertDialogContent className="glass-card border-2 border-primary/20">
+        <AlertDialogContent className="glass-card backdrop-blur-xl border-2 border-primary/20">
           <AlertDialogHeader>
-            <AlertDialogTitle>Guest Mode</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogTitle className="gradient-text">Guest Mode</AlertDialogTitle>
+            <AlertDialogDescription className="text-muted-foreground">
               Data won't be saved in guest mode. For the full experience, log in with Google.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogAction onClick={confirmGuestMode}>
+            <AlertDialogAction 
+              onClick={confirmGuestMode}
+              className="bg-gradient-to-r from-primary to-accent"
+            >
               Continue as Guest
             </AlertDialogAction>
           </AlertDialogFooter>

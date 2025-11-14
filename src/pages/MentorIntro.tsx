@@ -2,6 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { getMentorById } from "@/data/mentors";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { ArrowLeft, MessageCircle } from "lucide-react";
 
 const MentorIntro = () => {
@@ -18,60 +19,62 @@ const MentorIntro = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-3xl mx-auto space-y-8 pt-12">
-        {/* Back Button */}
-        <Button
-          variant="ghost"
-          onClick={() => navigate("/subjects")}
-          className="gap-2"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to Subjects
-        </Button>
+    <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5 p-6">
+      <div className="max-w-3xl mx-auto space-y-6 pt-6">
+        <div className="flex items-center justify-between">
+          <Button
+            variant="ghost"
+            onClick={() => navigate("/subjects")}
+            className="gap-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back
+          </Button>
+          <ThemeToggle />
+        </div>
 
         {/* Mentor Card */}
-        <Card className="glass-card rounded-3xl p-12 text-center space-y-8 animate-fade-in">
+        <Card className="glass-card backdrop-blur-xl rounded-3xl p-10 text-center space-y-6 animate-fade-in border-2 border-primary/20">
           {/* Avatar with Gradient Ring */}
           <div className="relative inline-block">
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-500 via-blue-500 to-pink-500 rounded-full blur-xl opacity-70 animate-pulse"></div>
-            <div className="relative w-48 h-48 mx-auto">
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-500 via-blue-500 to-pink-500 rounded-full p-1">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary to-accent rounded-full blur-xl opacity-70 animate-pulse"></div>
+            <div className="relative w-40 h-40 mx-auto">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary to-accent rounded-full p-1">
                 <img
                   src={mentor.avatar}
                   alt={mentor.name}
-                  className="w-full h-full rounded-full object-cover bg-white"
+                  className="w-full h-full rounded-full object-cover bg-card"
                 />
               </div>
             </div>
           </div>
 
           {/* Mentor Info */}
-          <div className="space-y-4">
+          <div className="space-y-3">
             <div>
-              <h1 className="text-5xl font-bold gradient-text mb-2">
+              <h1 className="text-4xl font-bold gradient-text mb-2">
                 {mentor.name}
               </h1>
-              <p className="text-xl text-muted-foreground">
+              <p className="text-lg text-muted-foreground">
                 {mentor.subject} Expert
               </p>
             </div>
 
-            <p className="text-lg text-foreground max-w-xl mx-auto">
+            <p className="text-base text-foreground max-w-xl mx-auto">
               {mentor.description}
             </p>
           </div>
 
           {/* Expertise */}
-          <div className="space-y-4">
+          <div className="space-y-3">
             <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
               Expertise
             </h3>
-            <div className="flex flex-wrap justify-center gap-3">
+            <div className="flex flex-wrap justify-center gap-2">
               {mentor.expertise.map((skill, idx) => (
                 <span
                   key={idx}
-                  className="px-4 py-2 rounded-full bg-white/50 text-foreground text-sm font-medium"
+                  className="px-3 py-1.5 rounded-full bg-secondary text-foreground text-sm font-medium"
                 >
                   {skill}
                 </span>
@@ -80,8 +83,8 @@ const MentorIntro = () => {
           </div>
 
           {/* Greeting */}
-          <div className="glass-card rounded-2xl p-6 bg-white/40">
-            <p className="text-lg text-foreground italic">
+          <div className="glass-card rounded-2xl p-5 bg-secondary/50">
+            <p className="text-base text-foreground italic">
               "{mentor.greeting}"
             </p>
           </div>
@@ -90,10 +93,10 @@ const MentorIntro = () => {
           <Button
             onClick={() => navigate(`/chat/${mentor.id}`)}
             size="lg"
-            className="text-lg px-12 py-6 rounded-full glass-card-hover shadow-glow bg-gradient-to-r from-purple-500 via-blue-500 to-pink-500 hover:opacity-90 gap-2"
+            className="text-base px-10 py-6 rounded-full glass-card-hover shadow-glow bg-gradient-to-r from-primary to-accent hover:opacity-90 gap-2"
           >
             <MessageCircle className="w-5 h-5" />
-            Ask a Doubt
+            Start Chat
           </Button>
         </Card>
       </div>
