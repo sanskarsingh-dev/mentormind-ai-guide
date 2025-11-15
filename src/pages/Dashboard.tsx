@@ -112,15 +112,14 @@ const Dashboard = () => {
               
               <div className="text-center space-y-2">
                 <p className="text-sm text-muted-foreground">Quizzes Attempted</p>
-                <p className="text-4xl font-bold text-secondary">5</p>
+                <p className="text-5xl font-bold text-foreground drop-shadow-lg">5</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
         {/* Study & Ask Doubts Card (Merged) */}
-        <Card className="glass-card backdrop-blur-glass border-2 border-secondary/20 shadow-glow hover:scale-[1.02] transition-all cursor-pointer"
-              onClick={() => navigate("/subjects")}>
+        <Card className="glass-card backdrop-blur-glass border-2 border-secondary/20 shadow-glow">
           <CardHeader>
             <CardTitle className="text-2xl flex items-center gap-2">
               <BookOpen className="h-6 w-6 text-accent" />
@@ -135,28 +134,57 @@ const Dashboard = () => {
             <div className="flex items-start justify-between gap-4">
               <div className="flex flex-wrap gap-2 flex-1">
                 <span className="px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-medium">Sciences</span>
-                <span className="px-3 py-1.5 rounded-full bg-secondary/10 text-secondary text-xs font-medium">Maths</span>
+                <span className="px-3 py-1.5 rounded-full bg-accent/20 text-foreground text-xs font-semibold">Maths</span>
                 <span className="px-3 py-1.5 rounded-full bg-accent/10 text-accent text-xs font-medium">Tech</span>
                 <span className="px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-medium">Arts</span>
               </div>
               
-              <div className="flex flex-col items-end gap-2">
-                <div className="flex -space-x-3">
-                  {mentorImages.map((img, idx) => (
+              <div className="flex flex-col items-end gap-2 flex-shrink-0">
+                <div className="flex -space-x-2 pr-2 relative">
+                  {mentorImages.slice(0, 3).map((img, idx) => (
                     <img
                       key={idx}
                       src={img}
                       alt={`Mentor ${idx + 1}`}
-                      className="w-12 h-12 rounded-full border-2 border-background object-cover hover:scale-110 transition-transform"
+                      className="w-10 h-10 rounded-full border-2 border-background object-cover hover:scale-110 transition-transform cursor-pointer"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate("/subjects");
+                      }}
                     />
                   ))}
+                  <div className="w-10 h-10 rounded-full border-2 border-background object-cover bg-muted/50 backdrop-blur-sm flex items-center justify-center relative overflow-hidden cursor-pointer"
+                       onClick={(e) => {
+                         e.stopPropagation();
+                         navigate("/subjects");
+                       }}>
+                    <img
+                      src={mentorImages[3]}
+                      alt="Mentor 4"
+                      className="w-full h-full object-cover opacity-30 blur-[2px]"
+                    />
+                    <span className="absolute inset-0 flex items-center justify-center text-xs font-semibold text-foreground">
+                      +more
+                    </span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-1.5 text-sm">
-                  <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                  <span className="text-green-500 font-semibold">Online</span>
+                <div className="flex items-center gap-1.5 text-xs pr-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                  <span className="text-green-500 font-medium">Online</span>
                 </div>
               </div>
             </div>
+            
+            <Button
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate("/live-talk");
+              }}
+              className="w-full bg-gradient-to-r from-primary to-accent hover:shadow-glow transition-all"
+            >
+              <MessageCircle className="w-4 h-4 mr-2" />
+              Ask Doubt
+            </Button>
           </CardContent>
         </Card>
 

@@ -62,10 +62,11 @@ const SubjectSelection = () => {
                       alt={mentor.name}
                       className="w-12 h-12 rounded-lg object-cover border-2 border-primary/20"
                     />
-                    <div className="absolute -bottom-1 -left-1 flex items-center gap-1 bg-background/95 rounded-full px-1.5 py-0.5 border border-green-500/20">
-                      <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                      <span className="text-[10px] text-green-500 font-medium">online</span>
-                    </div>
+                  </div>
+                  
+                  <div className="absolute -bottom-1 left-0 flex items-center gap-1 bg-background/95 rounded-full px-2 py-0.5 border border-green-500/20">
+                    <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                    <span className="text-[10px] text-green-500 font-medium">online</span>
                   </div>
 
                   {/* Subject Info */}

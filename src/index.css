@@ -193,4 +193,9 @@ All colors MUST be HSL.
   .bubble-float {
     animation: float 8s ease-in-out infinite;
   }
+  
+  /* Mobile Safe Area Support */
+  .safe-area-bottom {
+    padding-bottom: max(env(safe-area-inset-bottom), 0.5rem);
+  }
 }
