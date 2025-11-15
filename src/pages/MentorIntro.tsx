@@ -35,15 +35,15 @@ const MentorIntro = () => {
 
         {/* Mentor Card */}
         <Card className="glass-card backdrop-blur-xl rounded-3xl p-10 text-center space-y-6 animate-fade-in border-2 border-primary/20">
-          {/* Avatar with Gradient Ring */}
+          {/* Avatar with Gradient Ring (Squircle) */}
           <div className="relative inline-block">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary to-accent rounded-full blur-xl opacity-70 animate-pulse"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-primary to-accent rounded-3xl blur-xl opacity-70 animate-pulse"></div>
             <div className="relative w-40 h-40 mx-auto">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary to-accent rounded-full p-1">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary to-accent rounded-3xl p-1">
                 <img
                   src={mentor.avatar}
                   alt={mentor.name}
-                  className="w-full h-full rounded-full object-cover bg-card"
+                  className="w-full h-full rounded-2xl object-cover bg-card"
                 />
               </div>
             </div>

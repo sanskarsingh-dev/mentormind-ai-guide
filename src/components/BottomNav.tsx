@@ -1,6 +1,7 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Home, Calendar, MessageCircle, BarChart3, User } from "lucide-react";
+import { Home, Calendar, BarChart3, User } from "lucide-react";
+import liveTalkLogo from "@/assets/live-talk-logo.png";
 
 export function BottomNav() {
   const navigate = useNavigate();
@@ -37,10 +38,11 @@ export function BottomNav() {
           </Button>
 
           <Button
-            onClick={() => navigate("/subjects")}
-            className="w-14 h-14 rounded-full bg-gradient-to-r from-primary to-accent hover:shadow-glow transition-all hover:scale-110 -mt-6"
+            onClick={() => navigate("/live-talk")}
+            className="w-16 h-16 rounded-full bg-gradient-to-r from-primary to-accent hover:shadow-glow transition-all hover:scale-110 -mt-8 p-0 shadow-lg shadow-primary/50"
+            aria-label="Live AI Doubt Solving"
           >
-            <MessageCircle className="h-6 w-6" />
+            <img src={liveTalkLogo} alt="Live AI Talk" className="w-full h-full rounded-full" />
           </Button>
 
           <Button
