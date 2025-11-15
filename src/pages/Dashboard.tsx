@@ -118,55 +118,43 @@ const Dashboard = () => {
           </CardContent>
         </Card>
 
-        {/* Ask Doubts Card */}
-        <Card className="glass-card backdrop-blur-glass border-2 border-secondary/20 shadow-glow hover:scale-[1.02] transition-all">
-          <CardHeader>
-            <CardTitle className="text-2xl flex items-center gap-2">
-              <MessageCircle className="h-6 w-6 text-secondary" />
-              Ask Doubts
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground mb-4">
-              Get instant answers from AI mentors
-            </p>
-            <Button 
-              onClick={() => navigate("/subjects")}
-              className="w-full bg-gradient-to-r from-secondary to-accent hover:opacity-90"
-            >
-              Ask Doubt
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* Study Subjects Card */}
-        <Card className="glass-card backdrop-blur-glass border-2 border-accent/20 shadow-glow hover:scale-[1.02] transition-all cursor-pointer"
+        {/* Study & Ask Doubts Card (Merged) */}
+        <Card className="glass-card backdrop-blur-glass border-2 border-secondary/20 shadow-glow hover:scale-[1.02] transition-all cursor-pointer"
               onClick={() => navigate("/subjects")}>
           <CardHeader>
             <CardTitle className="text-2xl flex items-center gap-2">
               <BookOpen className="h-6 w-6 text-accent" />
-              Study 12 Different Subjects
+              Study & Ask Doubts
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-muted-foreground">
-              Science, Maths, Tech, Arts, etc. with Specialized Mentors
+              Get help from specialized mentors across subjects.
             </p>
             
-            <div className="flex items-center gap-3">
-              <div className="flex -space-x-3">
-                {mentorImages.map((img, idx) => (
-                  <img
-                    key={idx}
-                    src={img}
-                    alt={`Mentor ${idx + 1}`}
-                    className="w-12 h-12 rounded-full border-2 border-background object-cover"
-                  />
-                ))}
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex flex-wrap gap-2 flex-1">
+                <span className="px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-medium">Sciences</span>
+                <span className="px-3 py-1.5 rounded-full bg-secondary/10 text-secondary text-xs font-medium">Maths</span>
+                <span className="px-3 py-1.5 rounded-full bg-accent/10 text-accent text-xs font-medium">Tech</span>
+                <span className="px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-medium">Arts</span>
               </div>
-              <div className="flex items-center gap-1 text-sm">
-                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                <span className="text-green-500 font-semibold">Online</span>
+              
+              <div className="flex flex-col items-end gap-2">
+                <div className="flex -space-x-3">
+                  {mentorImages.map((img, idx) => (
+                    <img
+                      key={idx}
+                      src={img}
+                      alt={`Mentor ${idx + 1}`}
+                      className="w-12 h-12 rounded-full border-2 border-background object-cover hover:scale-110 transition-transform"
+                    />
+                  ))}
+                </div>
+                <div className="flex items-center gap-1.5 text-sm">
+                  <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                  <span className="text-green-500 font-semibold">Online</span>
+                </div>
               </div>
             </div>
           </CardContent>

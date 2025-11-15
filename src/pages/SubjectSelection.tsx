@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { mentors } from "@/data/mentors";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { BottomNav } from "@/components/BottomNav";
-import { BookOpen, Beaker, Calculator, Languages, Microscope } from "lucide-react";
+import { BookOpen, Beaker, Calculator, Languages, Microscope, ArrowLeft } from "lucide-react";
 
 const subjectIcons: Record<string, any> = {
   Mathematics: Calculator,
@@ -20,16 +21,26 @@ const SubjectSelection = () => {
     <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5 pb-24">
       <div className="max-w-6xl mx-auto p-6 space-y-8">
         {/* Header */}
-        <div className="text-center space-y-4 pt-6">
-          <div className="flex justify-end mb-4">
+        <div className="space-y-4 pt-6">
+          <div className="flex items-center justify-between mb-4">
+            <Button
+              variant="ghost"
+              onClick={() => navigate("/dashboard")}
+              className="gap-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back to Dashboard
+            </Button>
             <ThemeToggle />
           </div>
-          <h1 className="text-4xl font-bold gradient-text">
-            Choose Your Subject
-          </h1>
-          <p className="text-lg text-muted-foreground">
-            Select a subject to meet your AI mentor
-          </p>
+          <div className="text-center space-y-4">
+            <h1 className="text-4xl font-bold gradient-text">
+              Choose Your Subject
+            </h1>
+            <p className="text-lg text-muted-foreground">
+              Select a subject to meet your AI mentor
+            </p>
+          </div>
         </div>
 
         {/* Subject Cards Grid */}
@@ -43,19 +54,36 @@ const SubjectSelection = () => {
                 onClick={() => navigate(`/mentor/${mentor.id}`)}
                 className="glass-card backdrop-blur-xl glass-card-hover cursor-pointer p-6 rounded-2xl space-y-4 group border-2 border-primary/10"
               >
-                {/* Subject Icon */}
-                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-glow group-hover:scale-110 transition-transform">
-                  <Icon className="w-7 h-7 text-white" />
-                </div>
+                <div className="flex items-start gap-4">
+                  {/* Mentor Avatar (Squircle) */}
+                  <div className="flex-shrink-0 relative">
+                    <img
+                      src={mentor.avatar}
+                      alt={mentor.name}
+                      className="w-12 h-12 rounded-lg object-cover border-2 border-primary/20"
+                    />
+                    <div className="absolute -bottom-1 -left-1 flex items-center gap-1 bg-background/95 rounded-full px-1.5 py-0.5 border border-green-500/20">
+                      <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                      <span className="text-[10px] text-green-500 font-medium">online</span>
+                    </div>
+                  </div>
 
-                {/* Subject Name */}
-                <div>
-                  <h3 className="text-xl font-bold text-foreground">
-                    {mentor.subject}
-                  </h3>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    with {mentor.name}
-                  </p>
+                  {/* Subject Info */}
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-glow group-hover:scale-110 transition-transform">
+                        <Icon className="w-5 h-5 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-bold text-foreground">
+                          {mentor.subject}
+                        </h3>
+                        <p className="text-xs text-muted-foreground">
+                          with {mentor.name}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Description */}
