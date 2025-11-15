@@ -102,16 +102,17 @@ const LiveAITalk = () => {
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 container mx-auto px-4 h-[calc(100vh-120px)] flex flex-col items-center justify-center">
-        {/* Timer Pill (when connected) */}
+      <div className="relative z-10 container mx-auto px-4 flex flex-col items-center justify-center py-4" style={{ minHeight: 'calc(100vh - 180px)', maxHeight: 'calc(100vh - 180px)' }}>
+        
+        {/* Session Timer (when connected) */}
         {connectionState === "connected" && (
-          <div className="absolute top-8 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full bg-primary/20 border border-primary/40 backdrop-blur-lg">
+          <div className="mb-2 px-4 py-2 rounded-full bg-primary/20 border border-primary/40 backdrop-blur-lg">
             <span className="text-sm font-semibold text-primary">{formatTime(sessionTime)}</span>
           </div>
         )}
 
         {/* Central Sphere with Animation */}
-        <div className="relative mb-8">
+        <div className="relative mb-4 sm:mb-6">
           {/* Animated Rings */}
           {isListening && (
             <>
@@ -121,13 +122,13 @@ const LiveAITalk = () => {
           )}
 
           {/* Main Sphere */}
-          <div className="relative w-64 h-64 rounded-full bg-gradient-to-br from-primary/20 via-accent/20 to-secondary/20 backdrop-blur-2xl shadow-2xl shadow-primary/50 flex items-center justify-center animate-float">
+          <div className="relative w-48 h-48 sm:w-64 sm:h-64 rounded-full bg-gradient-to-br from-primary/20 via-accent/20 to-secondary/20 backdrop-blur-2xl shadow-2xl shadow-primary/50 flex items-center justify-center animate-float">
             <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary/40 to-accent/40 blur-xl animate-pulse" />
             
-            {/* Mentor Avatar (when connecting/connected) */}
+            {/* Mentor Avatar (when connecting/connected) - Circular */}
             {(connectionState === "connecting" || connectionState === "connected" || connectionState === "ended") && selectedMentor && (
               <div className="relative z-10 animate-scale-in">
-                <div className="w-32 h-32 rounded-2xl overflow-hidden border-4 border-primary/40 shadow-glow">
+                <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden border-4 border-primary/40 shadow-glow">
                   <img
                     src={selectedMentor.avatar}
                     alt={selectedMentor.name}
@@ -135,37 +136,37 @@ const LiveAITalk = () => {
                   />
                 </div>
                 {connectionState === "connected" && (
-                  <div className="absolute inset-0 -m-2 rounded-2xl border-2 border-primary/50 animate-pulse" />
+                  <div className="absolute inset-0 -m-2 rounded-full border-2 border-primary/50 animate-pulse" />
                 )}
               </div>
             )}
 
             {/* Idle State - Inner Glow */}
             {connectionState === "idle" && (
-              <div className="relative z-10 w-40 h-40 rounded-full bg-gradient-to-br from-primary/60 to-accent/60 blur-md animate-pulse" />
+              <div className="relative z-10 w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-gradient-to-br from-primary/60 to-accent/60 blur-md animate-pulse" />
             )}
           </div>
         </div>
 
         {/* Status Text */}
-        <div className="text-center space-y-3 mb-8">
+        <div className="text-center space-y-2 mb-6 px-4">
           {connectionState === "idle" && (
-            <p className="text-lg text-muted-foreground">Ready to start learning</p>
+            <p className="text-base sm:text-lg text-muted-foreground">Ready to start learning</p>
           )}
           
           {(connectionState === "connecting" || connectionState === "connected") && selectedMentor && (
             <>
-              <p className="text-xl font-semibold text-foreground animate-fade-in">
+              <p className="text-lg sm:text-xl font-semibold text-foreground animate-fade-in">
                 {statusText}
               </p>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-xs sm:text-sm text-muted-foreground">
                 {selectedMentor.subject} expert
               </p>
             </>
           )}
 
           {connectionState === "ended" && (
-            <p className="text-xl font-semibold text-foreground">Call Ended</p>
+            <p className="text-lg sm:text-xl font-semibold text-foreground">Call Ended</p>
           )}
         </div>
 
@@ -174,32 +175,32 @@ const LiveAITalk = () => {
           <Button
             onClick={() => setIsModalOpen(true)}
             variant="outline"
-            className="px-6 py-6 rounded-2xl glass-card border-2 border-primary/30 hover:border-primary/60 transition-all mb-8"
+            className="px-4 py-4 sm:px-6 sm:py-6 rounded-2xl glass-card border-2 border-primary/30 hover:border-primary/60 transition-all mb-6 text-sm sm:text-base"
           >
-            <span className="text-base">Which subject do you want to ask?</span>
+            <span>Which subject do you want to ask?</span>
           </Button>
         )}
 
         {/* End State Actions */}
         {connectionState === "ended" && (
-          <div className="flex items-center gap-4 animate-fade-in">
+          <div className="flex flex-col items-center gap-3 animate-fade-in w-full max-w-xs px-4">
             <Button
               onClick={handleReconnect}
-              className="px-6 py-3 rounded-xl bg-gradient-to-r from-primary to-accent hover:opacity-90"
+              className="w-full px-6 py-3 rounded-xl bg-gradient-to-r from-primary to-accent hover:opacity-90 text-sm sm:text-base"
             >
               Reconnect
             </Button>
             <Button
               onClick={handleReselectSubject}
               variant="outline"
-              className="px-6 py-3 rounded-xl"
+              className="w-full px-6 py-3 rounded-xl text-sm sm:text-base"
             >
               Reselect Subject
             </Button>
             <Button
               onClick={() => navigate("/dashboard")}
               variant="ghost"
-              className="px-6 py-3 rounded-xl"
+              className="w-full px-6 py-3 rounded-xl text-sm sm:text-base"
             >
               Back to Dashboard
             </Button>

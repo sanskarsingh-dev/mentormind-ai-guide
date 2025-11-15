@@ -34,9 +34,9 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-md glass-card backdrop-blur-xl border-2 border-primary/20">
+        <DialogContent className="sm:max-w-md max-w-[90vw] glass-card backdrop-blur-xl border-2 border-primary/20">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-center gradient-text">Welcome to Luna AI</DialogTitle>
+            <DialogTitle className="text-2xl font-bold text-center gradient-text">Welcome to MentorMind</DialogTitle>
             <DialogDescription className="text-center text-muted-foreground">
               Sign in to save your progress and access all features
             </DialogDescription>
