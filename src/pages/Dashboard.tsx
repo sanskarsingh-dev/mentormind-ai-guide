@@ -3,8 +3,10 @@ import { BottomNav } from "@/components/BottomNav";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Bell, BookOpen, MessageCircle, Brain, Clock } from "lucide-react";
+import { AskDoubtModal } from "@/components/AskDoubtModal";
+import { Bell, BookOpen, Brain, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 // Import mentor images
 import lisaImg from "@/assets/lisa-mentor.jpg";
@@ -15,6 +17,7 @@ import sophieImg from "@/assets/sophie-mentor.jpg";
 const Dashboard = () => {
   const navigate = useNavigate();
   const mentorImages = [lisaImg, soniaImg, lucyImg, sophieImg];
+  const [isAskDoubtModalOpen, setIsAskDoubtModalOpen] = useState(false);
   
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -67,52 +70,56 @@ const Dashboard = () => {
       <div className="container mx-auto px-4 py-8 space-y-6">
         {/* Analytics Card */}
         <Card className="glass-card backdrop-blur-glass border-2 border-primary/20 shadow-glow">
-          <CardHeader>
+          <CardHeader className="pb-4">
             <CardTitle className="text-2xl flex items-center gap-2">
               <Brain className="h-6 w-6 text-primary" />
               Your Insights
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="text-center space-y-2">
-                <p className="text-sm text-muted-foreground">Subjects Studied</p>
-                <p className="text-4xl font-bold text-primary">3</p>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-6">
+              {/* Left Column - Stacked Stats */}
+              <div className="space-y-6">
+                <div className="text-center space-y-1">
+                  <p className="text-sm text-muted-foreground">Subjects Studied</p>
+                  <p className="text-4xl font-bold text-primary">3</p>
+                </div>
+                
+                <div className="text-center space-y-1">
+                  <p className="text-sm text-muted-foreground">Quizzes Attempted</p>
+                  <p className="text-4xl font-bold text-primary">5</p>
+                </div>
               </div>
               
-              <div className="flex flex-col items-center space-y-2">
+              {/* Right Column - Hours Circle */}
+              <div className="flex flex-col items-center justify-center space-y-2">
                 <p className="text-sm text-muted-foreground">Hours Spent</p>
-                <div className="relative w-32 h-32">
-                  <svg className="transform -rotate-90 w-32 h-32">
+                <div className="relative w-28 h-28">
+                  <svg className="transform -rotate-90 w-28 h-28">
                     <circle
-                      cx="64"
-                      cy="64"
-                      r="56"
+                      cx="56"
+                      cy="56"
+                      r="48"
                       stroke="currentColor"
                       strokeWidth="8"
                       fill="transparent"
                       className="text-muted"
                     />
                     <circle
-                      cx="64"
-                      cy="64"
-                      r="56"
+                      cx="56"
+                      cy="56"
+                      r="48"
                       stroke="currentColor"
                       strokeWidth="8"
                       fill="transparent"
-                      strokeDasharray={`${2.5 * 3.14159 * 56} ${(10 - 2.5) * 3.14159 * 56}`}
+                      strokeDasharray={`${2.5 * 3.14159 * 48} ${(10 - 2.5) * 3.14159 * 48}`}
                       className="text-primary"
                     />
                   </svg>
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-2xl font-bold">2h 30m</span>
+                    <span className="text-xl font-bold">2h 30m</span>
                   </div>
                 </div>
-              </div>
-              
-              <div className="text-center space-y-2">
-                <p className="text-sm text-muted-foreground">Quizzes Attempted</p>
-                <p className="text-5xl font-bold text-foreground drop-shadow-lg">5</p>
               </div>
             </div>
           </CardContent>
@@ -128,49 +135,41 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-muted-foreground">
-              Get help from specialized mentors across subjects.
+              Get help from specialised mentors across 12 different subjects.
             </p>
             
             <div className="flex items-start justify-between gap-4">
               <div className="flex flex-wrap gap-2 flex-1">
+                <span className="px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-medium">Maths</span>
                 <span className="px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-medium">Sciences</span>
-                <span className="px-3 py-1.5 rounded-full bg-accent/20 text-foreground text-xs font-semibold">Maths</span>
+                <span className="px-3 py-1.5 rounded-full bg-accent/10 text-accent text-xs font-medium">Languages</span>
                 <span className="px-3 py-1.5 rounded-full bg-accent/10 text-accent text-xs font-medium">Tech</span>
                 <span className="px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-medium">Arts</span>
+                <span className="px-3 py-1.5 rounded-full bg-accent/10 text-accent text-xs font-medium">Humanities</span>
+                <span className="px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-medium">Skills</span>
               </div>
               
               <div className="flex flex-col items-end gap-2 flex-shrink-0">
-                <div className="flex -space-x-2 pr-2 relative">
-                  {mentorImages.slice(0, 3).map((img, idx) => (
-                    <img
-                      key={idx}
-                      src={img}
-                      alt={`Mentor ${idx + 1}`}
-                      className="w-10 h-10 rounded-full border-2 border-background object-cover hover:scale-110 transition-transform cursor-pointer"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigate("/subjects");
-                      }}
-                    />
-                  ))}
-                  <div className="w-10 h-10 rounded-full border-2 border-background object-cover bg-muted/50 backdrop-blur-sm flex items-center justify-center relative overflow-hidden cursor-pointer"
-                       onClick={(e) => {
-                         e.stopPropagation();
-                         navigate("/subjects");
-                       }}>
-                    <img
-                      src={mentorImages[3]}
-                      alt="Mentor 4"
-                      className="w-full h-full object-cover opacity-30 blur-[2px]"
-                    />
-                    <span className="absolute inset-0 flex items-center justify-center text-xs font-semibold text-foreground">
-                      +more
-                    </span>
+                <div className="flex items-center gap-2">
+                  <div className="flex -space-x-2">
+                    {mentorImages.map((img, idx) => (
+                      <img
+                        key={idx}
+                        src={img}
+                        alt={`Mentor ${idx + 1}`}
+                        className="w-10 h-10 rounded-full border-2 border-background object-cover hover:scale-110 transition-transform cursor-pointer"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate("/subjects");
+                        }}
+                      />
+                    ))}
                   </div>
-                </div>
-                <div className="flex items-center gap-1.5 text-xs pr-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                  <span className="text-green-500 font-medium">Online</span>
+                  <span className="text-xs text-muted-foreground font-medium">+more</span>
+                  <div className="flex items-center gap-1.5 text-xs">
+                    <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                    <span className="text-green-500 font-medium">Online</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -178,11 +177,10 @@ const Dashboard = () => {
             <Button
               onClick={(e) => {
                 e.stopPropagation();
-                navigate("/live-talk");
+                setIsAskDoubtModalOpen(true);
               }}
               className="w-full bg-gradient-to-r from-primary to-accent hover:shadow-glow transition-all"
             >
-              <MessageCircle className="w-4 h-4 mr-2" />
               Ask Doubt
             </Button>
           </CardContent>
@@ -202,7 +200,7 @@ const Dashboard = () => {
             </p>
             <Button 
               onClick={() => navigate("/quiz")}
-              className="w-full bg-gradient-to-r from-primary to-secondary hover:opacity-90"
+              className="w-full bg-gradient-to-r from-primary to-accent hover:shadow-glow transition-all"
             >
               Create a Quiz
             </Button>
@@ -212,6 +210,12 @@ const Dashboard = () => {
 
       {/* Bottom Navigation */}
       <BottomNav />
+      
+      {/* Ask Doubt Modal */}
+      <AskDoubtModal 
+        open={isAskDoubtModalOpen} 
+        onOpenChange={setIsAskDoubtModalOpen} 
+      />
     </div>
   );
 };
