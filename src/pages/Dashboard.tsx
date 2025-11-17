@@ -9,10 +9,10 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 // Import mentor images
-import lisaImg from "@/assets/lisa-mentor.jpg";
-import soniaImg from "@/assets/sonia-mentor.jpg";
-import lucyImg from "@/assets/lucy-mentor.jpg";
-import sophieImg from "@/assets/sophie-mentor.jpg";
+import lisaImg from "@/assets/lisa-mentor.webp";
+import soniaImg from "@/assets/sonia-mentor.webp";
+import lucyImg from "@/assets/lucy-mentor.webp";
+import sophieImg from "@/assets/sophie-mentor.webp";
 
 const Dashboard = () => {
   const navigate = useNavigate();
