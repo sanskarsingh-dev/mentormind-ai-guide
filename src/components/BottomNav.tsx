@@ -1,7 +1,7 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Home, Calendar, BarChart3, User } from "lucide-react";
-import liveTalkLogo from "@/assets/ai-live-talk.webp";
+import liveTalkLogo from "@/assets/ai-talk-icon.webp";
 
 export function BottomNav() {
   const navigate = useNavigate();
