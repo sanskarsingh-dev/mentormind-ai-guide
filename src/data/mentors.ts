@@ -1,15 +1,15 @@
 import lisaImg from "@/assets/Picsart_25-11-13_02-25-35-962.webp";
 import soniaImg from "@/assets/Picsart_25-11-13_02-50-22-818.webp";
-import tanishkaImg from "@/assets/tanishka-mentor.jpg";
-import lucyImg from "@/assets/lucy-mentor.jpg";
-import sophieImg from "@/assets/sophie-mentor.jpg";
-import marieImg from "@/assets/marie-mentor.jpg";
-import lyraImg from "@/assets/lyra-mentor.jpg";
-import vedikaImg from "@/assets/vedika-mentor.jpg";
-import devikaImg from "@/assets/devika-mentor.jpg";
-import stacyImg from "@/assets/stacy-mentor.jpg";
-import rosieImg from "@/assets/rosie-mentor.jpg";
-import selenaImg from "@/assets/selena-mentor.jpg";
+import tanishkaImg from "@/assets/tanishka-mentor.webp";
+import lucyImg from "@/assets/lucy-mentor.webp";
+import sophieImg from "@/assets/sophie-mentor.webp";
+import marieImg from "@/assets/marie-mentor.webp";
+import lyraImg from "@/assets/lyra-mentor.webp";
+import vedikaImg from "@/assets/vedika-mentor.webp";
+import devikaImg from "@/assets/devika-mentor.webp";
+import stacyImg from "@/assets/stacy-mentor.webp";
+import rosieImg from "@/assets/rosie-mentor.webp";
+import selenaImg from "@/assets/selena-mentor.webp";
 
 export interface Mentor {
   id: string;
