@@ -100,4 +100,4 @@ export function SubjectSelectionModal({ isOpen, onClose, onSelect }: SubjectSele
       </DialogContent>
     </Dialog>
   );
-                                               }
+    }
