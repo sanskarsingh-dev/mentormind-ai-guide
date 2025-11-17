@@ -1,5 +1,5 @@
 import lisaImg from "@/assets/Picsart_25-11-13_02-25-35-962.webp";
-import soniaImg from "@/assets/sonia-mentor.jpg";
+import soniaImg from "@/assets/Picsart_25-11-13_02-50-22-818.webp";
 import tanishkaImg from "@/assets/tanishka-mentor.jpg";
 import lucyImg from "@/assets/lucy-mentor.jpg";
 import sophieImg from "@/assets/sophie-mentor.jpg";
