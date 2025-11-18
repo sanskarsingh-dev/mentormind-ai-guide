@@ -44,7 +44,7 @@ const Profile = () => {
             </Avatar>
             <div className="flex-1">
               <h2 className="text-2xl font-bold gradient-text">Guest User</h2>
-              <p className="text-muted-foreground">guest@lunaai.app</p>
+              <p className="text-muted-foreground">guest@mentormind.app</p>
             </div>
           </div>
 
