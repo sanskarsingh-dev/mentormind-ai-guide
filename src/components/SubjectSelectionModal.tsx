@@ -14,7 +14,7 @@ const PhysicsIcon = ({ className }: { className?: string }) => (
 );
 
 const hindiIcon = ({ className }: { className?: string }) => (
-  <img src={hindiSvg} alt="Hindi" className={className} />
+  <img src={HindiSvg} alt="Hindi" className={className} />
 );
 
 
