@@ -3,10 +3,18 @@ import { Card } from "@/components/ui/card";
 import { mentors } from "@/data/mentors";
 import { BookOpen, Beaker, Calculator, Languages, Microscope } from "lucide-react";
 import physicsSvg from "@/assets/subjects/physics.svg";
+import hindiSvg from "@/assets/subjects/hindi.svg";
+
+
+
 
 // 2. Create the helper component
 const PhysicsIcon = ({ className }: { className?: string }) => (
   <img src={physicsSvg} alt="Physics" className={className} />
+);
+
+const hindiIcon = ({ className }: { className?: string }) => (
+  <img src={hindiSvg} alt="Hindi" className={className} />
 );
 
 
@@ -17,6 +25,7 @@ const subjectIcons: Record<string, any> = {
   Biology: Microscope,
   English: Languages,
   Chemistry: Beaker,
+  Hindi : HindiIcon
 };
 
 interface SubjectSelectionModalProps {
