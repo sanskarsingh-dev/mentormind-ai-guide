@@ -5,11 +5,10 @@ import { mentors } from "@/data/mentors";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { BottomNav } from "@/components/BottomNav";
 import { BookOpen, Beaker, Calculator, Languages, Microscope, ArrowLeft } from "lucide-react";
-import { ReactComponent as PhysicsIcon } from "@/assets/subjects/physics.svg";
 
 const subjectIcons: Record<string, any> = {
   Mathematics: Calculator,
-  Physics: PhysicsIcon,
+  Physics: Beaker,
   Biology: Microscope,
   English: Languages,
   Chemistry: Beaker,

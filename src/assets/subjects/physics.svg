@@ -15,4 +15,7 @@
                 <circle cx="-12" cy="-20" r="3.5" fill="#fff"/>
             </g>
         </svg>
+      <h3>Physics</h3>
+        <p>with Miss Sonia</p>
+        <button onclick="copySVG('physics')">Copy SVG</button>
     </div>

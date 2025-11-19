@@ -2,12 +2,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Card } from "@/components/ui/card";
 import { mentors } from "@/data/mentors";
 import { BookOpen, Beaker, Calculator, Languages, Microscope } from "lucide-react";
-import { ReactComponent as PhysicsIcon } from "@/assets/subjects/physics.svg";
-
 
 const subjectIcons: Record<string, any> = {
   Mathematics: Calculator,
-  Physics: PhysicsIcon,
+  Physics: Beaker,
   Biology: Microscope,
   English: Languages,
   Chemistry: Beaker,
