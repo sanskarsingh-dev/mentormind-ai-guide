@@ -5,6 +5,9 @@ import { BookOpen, Beaker, Calculator, Languages, Microscope } from "lucide-reac
 import physicsSvg from "@/assets/subjects/physics.svg";
 import hindiSvg from "@/assets/subjects/hindi.svg";
 import computerSvg from "@/assets/subjects/computer.svg";
+import artSvg from "@/assets/subjects/art.svg";
+import meditationSvg from "@/assets/subjects/meditation.svg";
+import historySvg from "@/assets/subjects/history.svg";
 
 
 
@@ -22,7 +25,17 @@ const ComputerIcon = ({ className }: { className?: string }) => (
   <img src={computerSvg} alt="Computer" className={className} />
 );
 
+const ArtIcon = ({ className }: { className?: string }) => (
+  <img src={artSvg} alt="Art" className={className} />
+);
 
+const MeditationIcon = ({ className }: { className?: string }) => (
+  <img src={meditationSvg} alt="Meditation" className={className} />
+);
+    
+const HistoryIcon = ({ className }: { className?: string }) => (
+  <img src={historySvg} alt="History" className={className} />
+);
 
 
 const subjectIcons: Record<string, any> = {
@@ -33,7 +46,9 @@ const subjectIcons: Record<string, any> = {
   Chemistry: Beaker,
   Hindi : HindiIcon,
   Computer : ComputerIcon,
-
+  Art : ArtIcon,
+  Meditation: MeditationIcon,
+  History: HistoryIcon,
 
 
 };
