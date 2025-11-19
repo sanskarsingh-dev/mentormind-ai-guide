@@ -5,10 +5,19 @@ import { mentors } from "@/data/mentors";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { BottomNav } from "@/components/BottomNav";
 import { BookOpen, Beaker, Calculator, Languages, Microscope, ArrowLeft } from "lucide-react";
+import physicsSvg from "@/assets/subjects/physics.svg";
+
+// 2. Create a helper component to render the image
+const PhysicsIcon = ({ className }: { className?: string }) => (
+  <img src={physicsSvg} alt="Physics" className={className} />
+);
+
+
+
 
 const subjectIcons: Record<string, any> = {
   Mathematics: Calculator,
-  Physics: Beaker,
+  Physics: PhysicsIcon,
   Biology: Microscope,
   English: Languages,
   Chemistry: Beaker,
