@@ -7,6 +7,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { BookOpen, Beaker, Calculator, Languages, Microscope, ArrowLeft } from "lucide-react";
 import physicsSvg from "@/assets/subjects/physics.svg";
 import hindiSvg from "@/assets/subjects/hindi.svg";
+import computerSvg from "@/assets/subjects/computer.svg";
 
 
 // 2. Create a helper component to render the image
@@ -18,6 +19,11 @@ const HindiIcon = ({ className }: { className?: string }) => (
   <img src={hindiSvg} alt="Hindi" className={className} />
 );
 
+const ComputerIcon = ({ className }: { className?: string }) => (
+  <img src={computerSvg} alt="Computer" className={className} />
+);
+
+
 
 const subjectIcons: Record<string, any> = {
   Mathematics: Calculator,
@@ -26,6 +32,10 @@ const subjectIcons: Record<string, any> = {
   English: Languages,
   Chemistry: Beaker,
   Hindi : HindiIcon,
+  Computer : ComputerIcon,
+
+
+
 };
 
 const SubjectSelection = () => {
