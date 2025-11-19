@@ -25,7 +25,7 @@ const subjectIcons: Record<string, any> = {
   Biology: Microscope,
   English: Languages,
   Chemistry: Beaker,
-  Hindi : HindiIcon
+  Hindi : HindiIcon,
 };
 
 interface SubjectSelectionModalProps {
