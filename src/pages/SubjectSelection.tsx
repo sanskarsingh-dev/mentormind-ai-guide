@@ -8,6 +8,9 @@ import { BookOpen, Beaker, Calculator, Languages, Microscope, ArrowLeft } from "
 import physicsSvg from "@/assets/subjects/physics.svg";
 import hindiSvg from "@/assets/subjects/hindi.svg";
 import computerSvg from "@/assets/subjects/computer.svg";
+import artSvg from "@/assets/subjects/art.svg";
+import meditationSvg from "@/assets/subjects/meditation.svg";
+import historySvg from "@/assets/subjects/history.svg";
 
 
 // 2. Create a helper component to render the image
@@ -23,6 +26,21 @@ const ComputerIcon = ({ className }: { className?: string }) => (
   <img src={computerSvg} alt="Computer" className={className} />
 );
 
+const ArtIcon = ({ className }: { className?: string }) => (
+  <img src={artSvg} alt="Art" className={className} />
+);
+
+const MeditationIcon = ({ className }: { className?: string }) => (
+  <img src={meditationSvg} alt="Meditation" className={className} />
+);
+    
+const HistoryIcon = ({ className }: { className?: string }) => (
+  <img src={historySvg} alt="History" className={className} />
+);
+
+
+
+
 
 
 const subjectIcons: Record<string, any> = {
@@ -33,7 +51,9 @@ const subjectIcons: Record<string, any> = {
   Chemistry: Beaker,
   Hindi : HindiIcon,
   Computer : ComputerIcon,
-
+  Art : ArtIcon,
+  Meditation: MeditationIcon,
+  History: HistoryIcon,
 
 
 };
