@@ -2,10 +2,18 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Card } from "@/components/ui/card";
 import { mentors } from "@/data/mentors";
 import { BookOpen, Beaker, Calculator, Languages, Microscope } from "lucide-react";
+import physicsSvg from "@/assets/subjects/physics.svg";
+
+// 2. Create the helper component
+const PhysicsIcon = ({ className }: { className?: string }) => (
+  <img src={physicsSvg} alt="Physics" className={className} />
+);
+
+
 
 const subjectIcons: Record<string, any> = {
   Mathematics: Calculator,
-  Physics: Beaker,
+  Physics: PhysicsIcon,
   Biology: Microscope,
   English: Languages,
   Chemistry: Beaker,
