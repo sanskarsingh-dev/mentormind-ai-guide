@@ -14,7 +14,7 @@ const PhysicsIcon = ({ className }: { className?: string }) => (
   <img src={physicsSvg} alt="Physics" className={className} />
 );
 
-const hindiIcon = ({ className }: { className?: string }) => (
+const HindiIcon = ({ className }: { className?: string }) => (
   <img src={hindiSvg} alt="Hindi" className={className} />
 );
 
