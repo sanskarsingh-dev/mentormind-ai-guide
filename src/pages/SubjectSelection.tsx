@@ -6,13 +6,17 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { BottomNav } from "@/components/BottomNav";
 import { BookOpen, Beaker, Calculator, Languages, Microscope, ArrowLeft } from "lucide-react";
 import physicsSvg from "@/assets/subjects/physics.svg";
+import hindiSvg from "@/assets/subjects/hindi.svg";
+
 
 // 2. Create a helper component to render the image
 const PhysicsIcon = ({ className }: { className?: string }) => (
   <img src={physicsSvg} alt="Physics" className={className} />
 );
 
-
+const hindiIcon = ({ className }: { className?: string }) => (
+  <img src={hindiSvg} alt="Hindi" className={className} />
+);
 
 
 const subjectIcons: Record<string, any> = {
@@ -21,6 +25,7 @@ const subjectIcons: Record<string, any> = {
   Biology: Microscope,
   English: Languages,
   Chemistry: Beaker,
+  Hindi : HindiIcon,
 };
 
 const SubjectSelection = () => {
