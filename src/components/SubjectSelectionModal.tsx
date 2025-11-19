@@ -22,7 +22,7 @@ const HindiIcon = ({ className }: { className?: string }) => (
 );
 
 const ComputerIcon = ({ className }: { className?: string }) => (
-  <img src={computerSvg} alt="Computer" className={className} />
+  <img src={computerSvg} alt="Computer Science" className={className} />
 );
 
 const ArtIcon = ({ className }: { className?: string }) => (
@@ -30,11 +30,11 @@ const ArtIcon = ({ className }: { className?: string }) => (
 );
 
 const MeditationIcon = ({ className }: { className?: string }) => (
-  <img src={meditationSvg} alt="Meditation" className={className} />
+  <img src={meditationSvg} alt="Meditation and Physical Education" className={className} />
 );
     
 const HistoryIcon = ({ className }: { className?: string }) => (
-  <img src={historySvg} alt="History" className={className} />
+  <img src={historySvg} alt="History & Civics" className={className} />
 );
 
 
