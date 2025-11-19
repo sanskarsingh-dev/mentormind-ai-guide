@@ -4,6 +4,7 @@ import { mentors } from "@/data/mentors";
 import { BookOpen, Beaker, Calculator, Languages, Microscope } from "lucide-react";
 import physicsSvg from "@/assets/subjects/physics.svg";
 import hindiSvg from "@/assets/subjects/hindi.svg";
+import computerSvg from "@/assets/subjects/computer.svg";
 
 
 
@@ -14,8 +15,13 @@ const PhysicsIcon = ({ className }: { className?: string }) => (
 );
 
 const HindiIcon = ({ className }: { className?: string }) => (
-  <img src={HindiSvg} alt="Hindi" className={className} />
+  <img src={hindiSvg} alt="Hindi" className={className} />
 );
+
+const ComputerIcon = ({ className }: { className?: string }) => (
+  <img src={computerSvg} alt="Computer" className={className} />
+);
+
 
 
 
@@ -26,6 +32,10 @@ const subjectIcons: Record<string, any> = {
   English: Languages,
   Chemistry: Beaker,
   Hindi : HindiIcon,
+  Computer : ComputerIcon,
+
+
+
 };
 
 interface SubjectSelectionModalProps {
