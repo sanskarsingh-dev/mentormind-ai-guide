@@ -6,7 +6,7 @@ import sophieImg from "@/assets/sophie-mentor.webp";
 import marieImg from "@/assets/marie-mentor.webp";
 import lyraImg from "@/assets/lyra-mentor.webp";
 import vedikaImg from "@/assets/vedika-mentor.webp";
-import devikaImg from "@/assets/Picsart_25-11-19_01-55-39-880 (1) (1).webp";
+import devikaImg from "@/assets/devika-mentor.webp";
 import stacyImg from "@/assets/stacy-mentor.webp";
 import rosieImg from "@/assets/rosie-mentor.webp";
 import selenaImg from "@/assets/selena-mentor.webp";
