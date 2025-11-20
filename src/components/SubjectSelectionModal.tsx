@@ -2,55 +2,59 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Card } from "@/components/ui/card";
 import { mentors } from "@/data/mentors";
 import { BookOpen, Beaker, Calculator, Languages, Microscope } from "lucide-react";
+
+// 1. Import all SVGs
 import physicsSvg from "@/assets/subjects/physics.svg";
 import hindiSvg from "@/assets/subjects/hindi.svg";
 import computerSvg from "@/assets/subjects/computer.svg";
 import artSvg from "@/assets/subjects/art.svg";
 import meditationSvg from "@/assets/subjects/meditation.svg";
 import historySvg from "@/assets/subjects/history.svg";
+import geographySvg from "@/assets/subjects/geography.svg";
+import musicSvg from "@/assets/subjects/music.svg";
 
-
-
-
-// 2. Create the helper component
+// 2. Create Helper Components
 const PhysicsIcon = ({ className }: { className?: string }) => (
   <img src={physicsSvg} alt="Physics" className={className} />
 );
-
 const HindiIcon = ({ className }: { className?: string }) => (
   <img src={hindiSvg} alt="Hindi" className={className} />
 );
-
 const ComputerIcon = ({ className }: { className?: string }) => (
   <img src={computerSvg} alt="Computer Science" className={className} />
 );
-
 const ArtIcon = ({ className }: { className?: string }) => (
   <img src={artSvg} alt="Art" className={className} />
 );
-
 const MeditationIcon = ({ className }: { className?: string }) => (
-  <img src={meditationSvg} alt="Meditation and Physical Education" className={className} />
+  <img src={meditationSvg} alt="Meditation" className={className} />
 );
-    
 const HistoryIcon = ({ className }: { className?: string }) => (
-  <img src={historySvg} alt="History & Civics" className={className} />
+  <img src={historySvg} alt="History" className={className} />
+);
+const GeographyIcon = ({ className }: { className?: string }) => (
+  <img src={geographySvg} alt="Geography" className={className} />
+);
+const MusicIcon = ({ className }: { className?: string }) => (
+  <img src={musicSvg} alt="Music" className={className} />
 );
 
-
+// 3. Map keys EXACTLY to the subject strings in mentors.ts
 const subjectIcons: Record<string, any> = {
-  Mathematics: Calculator,
-  Physics: PhysicsIcon,
-  Biology: Microscope,
-  English: Languages,
-  Chemistry: Beaker,
-  Hindi : HindiIcon,
-  Computer : ComputerIcon,
-  Art : ArtIcon,
-  Meditation: MeditationIcon,
-  History: HistoryIcon,
-
-
+  "Mathematics": Calculator,
+  "Physics": PhysicsIcon,
+  "Biology": Microscope,
+  "English": Languages,
+  "Chemistry": Beaker,
+  "Hindi": HindiIcon,
+  "Art": ArtIcon,
+  "Geography": GeographyIcon,
+  
+  // These keys must have quotes to handle spaces & special characters
+  "Computer Science": ComputerIcon,
+  "History & Civics": HistoryIcon,
+  "Meditation and Physical Education": MeditationIcon,
+  "Vocal Music": MusicIcon, 
 };
 
 interface SubjectSelectionModalProps {
@@ -60,6 +64,7 @@ interface SubjectSelectionModalProps {
 }
 
 export function SubjectSelectionModal({ isOpen, onClose, onSelect }: SubjectSelectionModalProps) {
+  // ... (rest of the component code remains the same)
   const uniqueSubjects = Array.from(new Set(mentors.map((m) => m.subject)));
 
   return (
@@ -73,6 +78,7 @@ export function SubjectSelectionModal({ isOpen, onClose, onSelect }: SubjectSele
         
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 py-4">
           {uniqueSubjects.map((subject) => {
+            // This line looks up the exact string in your map above
             const Icon = subjectIcons[subject] || BookOpen;
             const mentor = mentors.find((m) => m.subject === subject);
             
