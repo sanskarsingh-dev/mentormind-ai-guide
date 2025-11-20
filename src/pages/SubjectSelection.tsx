@@ -5,15 +5,18 @@ import { mentors } from "@/data/mentors";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { BottomNav } from "@/components/BottomNav";
 import { BookOpen, Beaker, Calculator, Languages, Microscope, ArrowLeft } from "lucide-react";
+
+// 1. Imports for SVGs
 import physicsSvg from "@/assets/subjects/physics.svg";
 import hindiSvg from "@/assets/subjects/hindi.svg";
 import computerSvg from "@/assets/subjects/computer.svg";
 import artSvg from "@/assets/subjects/art.svg";
 import meditationSvg from "@/assets/subjects/meditation.svg";
 import historySvg from "@/assets/subjects/history.svg";
+import geographySvg from "@/assets/subjects/geography.svg";
+import musicSvg from "@/assets/subjects/music.svg";
 
-
-// 2. Create a helper component to render the image
+// 2. Helper components to render the images
 const PhysicsIcon = ({ className }: { className?: string }) => (
   <img src={physicsSvg} alt="Physics" className={className} />
 );
@@ -31,31 +34,37 @@ const ArtIcon = ({ className }: { className?: string }) => (
 );
 
 const MeditationIcon = ({ className }: { className?: string }) => (
-  <img src={meditationSvg} alt="Meditation and Physical Education" className={className} />
+  <img src={meditationSvg} alt="Meditation" className={className} />
 );
     
 const HistoryIcon = ({ className }: { className?: string }) => (
-  <img src={historySvg} alt="History & Civics" className={className} />
+  <img src={historySvg} alt="History" className={className} />
 );
 
+const GeographyIcon = ({ className }: { className?: string }) => (
+  <img src={geographySvg} alt="Geography" className={className} />
+);
 
+const MusicIcon = ({ className }: { className?: string }) => (
+  <img src={musicSvg} alt="Music" className={className} />
+);
 
-
-
-
+// 3. Map keys EXACTLY to the subject strings in mentors.ts
 const subjectIcons: Record<string, any> = {
-  Mathematics: Calculator,
-  Physics: PhysicsIcon,
-  Biology: Microscope,
-  English: Languages,
-  Chemistry: Beaker,
-  Hindi : HindiIcon,
-  Computer : ComputerIcon,
-  Art : ArtIcon,
-  Meditation: MeditationIcon,
-  History: HistoryIcon,
-
-
+  "Mathematics": Calculator,
+  "Physics": PhysicsIcon,
+  "Biology": Microscope,
+  "English": Languages,
+  "Chemistry": Beaker,
+  "Hindi": HindiIcon,
+  "Art": ArtIcon,
+  "Geography": GeographyIcon,
+  
+  // These keys must match mentors.ts exactly (handling spaces & special chars)
+  "Computer Science": ComputerIcon,
+  "History & Civics": HistoryIcon,
+  "Meditation and Physical Education": MeditationIcon,
+  "Vocal Music": MusicIcon,
 };
 
 const SubjectSelection = () => {
@@ -90,6 +99,7 @@ const SubjectSelection = () => {
         {/* Subject Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 pt-4">
           {mentors.map((mentor) => {
+            // This looks up the icon using the exact subject name from the mentor data
             const Icon = subjectIcons[mentor.subject] || BookOpen;
             
             return (
