@@ -3,8 +3,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogAction } from "@/components/ui/alert-dialog";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner"; // Import toast for errors
-import { supabase } from "@/integrations/supabase/client"; // Import supabase
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 interface AuthModalProps {
   open: boolean;
@@ -13,7 +13,7 @@ interface AuthModalProps {
 
 export function AuthModal({ open, onOpenChange }: AuthModalProps) {
   const [showGuestDisclaimer, setShowGuestDisclaimer] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); // Add loading state
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleGoogleSignIn = async () => {
@@ -22,7 +22,6 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          // This redirects the user to the dashboard after they login on Google
           redirectTo: `${window.location.origin}/dashboard`,
         },
       });
@@ -30,8 +29,9 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
       if (error) {
         throw error;
       }
-      // No need to navigate() here, Supabase will redirect the whole page to Google
+      // Supabase handles the redirect, so we don't need to navigate here manually
     } catch (error: any) {
+      console.error("Login error:", error);
       toast.error(error.message || "Failed to sign in with Google");
       setIsLoading(false);
     }
