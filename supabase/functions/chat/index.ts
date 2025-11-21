@@ -43,7 +43,7 @@ Always be encouraging and make learning enjoyable!`;
       }))
     ];
 
-    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const response = await fetch('https://sstqxkceeybmpaqmbmuh.supabase.co/functions/v1/chat-gemini', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${GEMINI_API_KEY}`,
