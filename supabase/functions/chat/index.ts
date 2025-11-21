@@ -5,120 +5,70 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// REPLACE THIS WITH YOUR GEMINI API KEY FROM STEP 1
+const GEMINI_API_KEY = "AIzaSyBWjN8RKSGBVbjZ0HN36OyIys9iFjHoMSE"; 
+
 serve(async (req) => {
+  // Handle CORS preflight request
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { messages, mentorId, mentorName, mentorSubject } = await req.json();
-    
-    console.log('Chat request:', { mentorId, mentorName, mentorSubject, messageCount: messages.length });
+    const { messages, mentorName, mentorSubject } = await req.json();
 
-    const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
-    if (!GEMINI_API_KEY) {
-      throw new Error('GEMINI_API_KEY not configured');
-    }
+    // 1. Construct the system instruction
+    const systemInstruction = `You are ${mentorName}, an expert ${mentorSubject} tutor.
+    Keep answers concise, encouraging, and simple.
+    If the user asks something unrelated to ${mentorSubject}, politely guide them back.`;
 
-    // Create mentor-specific system prompt
-    const systemPrompt = `You are ${mentorName}, an expert AI ${mentorSubject} tutor. 
-Your teaching style: ${getMentorStyle(mentorId)}.
+    // 2. Format history for Gemini
+    // Gemini expects: { role: "user" | "model", parts: [{ text: "..." }] }
+    const contents = messages.map((msg: any) => ({
+      role: msg.role === 'assistant' ? 'model' : 'user',
+      parts: [{ text: msg.content }]
+    }));
 
-Key responsibilities:
-- Answer questions clearly and concisely
-- Break down complex concepts into simple terms
-- Provide examples when helpful
-- Encourage students and maintain a positive tone
-- Be patient and supportive
-- If a question is outside ${mentorSubject}, politely guide students back to the subject
-
-Always be encouraging and make learning enjoyable!`;
-
-    // Format messages for Lovable AI
-    const formattedMessages = [
-      { role: 'system', content: systemPrompt },
-      ...messages.map((msg: any) => ({
-        role: msg.role,
-        content: msg.content
-      }))
-    ];
-
-    const response = await fetch('https://sstqxkceeybmpaqmbmuh.supabase.co/functions/v1/chat-gemini', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${GEMINI_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'google/gemini-2.5-flash-lite',
-        messages: formattedMessages,
-        temperature: 0.7,
-        max_tokens: 1024,
-      }),
-    });
+    // 3. Call Google Gemini API
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: contents,
+          systemInstruction: { parts: [{ text: systemInstruction }] },
+          generationConfig: {
+            temperature: 0.7,
+            maxOutputTokens: 500,
+          }
+        })
+      }
+    );
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Lovable AI error:', response.status, errorText);
-      
-      if (response.status === 429) {
-        throw new Error('Rate limit exceeded. Please try again in a moment.');
-      }
-      
-      if (response.status === 402) {
-        throw new Error('Payment required. Please add credits to your Lovable AI workspace.');
-      }
-      
-      throw new Error(`AI API error: ${response.status}`);
+      console.error("Gemini API Error:", errorText);
+      throw new Error(`Gemini API Error: ${response.status}`);
     }
 
     const data = await response.json();
-    const aiResponse = data.choices?.[0]?.message?.content;
+    const aiResponse = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
     if (!aiResponse) {
       throw new Error('No response from AI');
     }
 
-    console.log('Chat response generated successfully');
-
     return new Response(
       JSON.stringify({ response: aiResponse }),
-      { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200 
-      }
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
     );
 
   } catch (error) {
     console.error('Chat function error:', error);
-    
     return new Response(
-      JSON.stringify({ 
-        error: error instanceof Error ? error.message : 'An error occurred'
-      }),
-      { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 500 
-      }
+      JSON.stringify({ error: error instanceof Error ? error.message : 'An error occurred' }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
     );
   }
 });
-
-function getMentorStyle(mentorId: string): string {
-  const styles: Record<string, string> = {
-    'lisa': 'Calm and analytical. You love finding shortcuts and explaining things with clarity. Use mathematical precision.',
-    'sonia': 'Energetic and practical. You simplify complex physics formulas and make them relatable to everyday life.',
-    'lucy': 'Gentle and visual. You explain biology through vivid imagery and help students visualize biological processes.',
-    'sophie': 'Creative and expressive. You improve grammar and writing style naturally, making English engaging and fun.',
-    'marie': 'Methodical and systematic. You connect chemical reactions to real-world applications and emphasize safety.',
-    'tanishka': 'Patient and cultural. You make Hindi learning engaging through stories and cultural context.',
-    'lyra': 'Gaming-inspired coder. You treat coding like gaming - building something new is exciting. Specialist in Java, Python, and AI.',
-    'vedika': 'Storyteller of the past. You connect historical events to the present and make history come alive.',
-    'devika': 'Peaceful and mindful. You guide students to inner balance through meditation and physical wellness.',
-    'stacy': 'Adventurous explorer. You connect places to cultures and make geography fascinating.',
-    'rosie': 'Creative artist. You inspire imagination and help students express themselves through art.',
-    'selena': 'Melodious music guide. You help students discover the beauty of their voice and the joy of singing.'
-  };
-
-  return styles[mentorId] || 'Supportive and clear. You break down concepts step by step.';
-}
