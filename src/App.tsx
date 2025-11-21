@@ -2,9 +2,11 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom"; // Import useNavigate
-import { useEffect } from "react"; // Import useEffect
-import { supabase } from "@/integrations/supabase/client"; // Import supabase
+import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+
+// Import Pages
 import Landing from "./pages/Landing";
 import Dashboard from "./pages/Dashboard";
 import SubjectSelection from "./pages/SubjectSelection";
@@ -20,15 +22,14 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-// Create a wrapper component to handle Auth Logic because useNavigate needs to be inside BrowserRouter
+// Wrapper component to handle Auth State changes
 const AppContent = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "SIGNED_IN") {
-        // If we are on the landing page, redirect to dashboard
+        // Redirect to dashboard if user is on the landing page
         if (window.location.pathname === "/") {
           navigate("/dashboard");
         }
@@ -64,7 +65,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <AppContent /> {/* Use the wrapper component */}
+        <AppContent />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
