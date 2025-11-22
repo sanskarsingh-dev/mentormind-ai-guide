@@ -6,6 +6,7 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -34,46 +35,44 @@ Key responsibilities:
 
 Always be encouraging and make learning enjoyable!`;
 
-    // Format messages for Lovable AI
-    const formattedMessages = [
-      { role: 'system', content: systemPrompt },
-      ...messages.map((msg: any) => ({
-        role: msg.role,
-        content: msg.content
-      }))
-    ];
+    // Transform messages to Gemini format
+    // Gemini expects roles: 'user' or 'model' (not 'assistant')
+    const validMessages = messages.map((msg: any) => ({
+      role: msg.role === 'assistant' ? 'model' : 'user',
+      parts: [{ text: msg.content }]
+    }));
 
-    const response = await fetch('https://sstqxkceeybmpaqmbmuh.supabase.co/functions/v1/chat', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${GEMINI_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'google/gemini-2.5-flash-lite',
-        messages: formattedMessages,
-        temperature: 0.7,
-        max_tokens: 1024,
-      }),
-    });
+    // Call Google Gemini API Direct
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lite-latest:generateContent?key=${GEMINI_API_KEY}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contents: validMessages,
+          systemInstruction: {
+            parts: [{ text: systemPrompt }]
+          },
+          generationConfig: {
+            temperature: 0.7,
+            maxOutputTokens: 1024,
+          }
+        }),
+      }
+    );
 
     if (!response.ok) {
       const errorText = await response.text();
       console.error('Gemini AI error:', response.status, errorText);
-      
-      if (response.status === 429) {
-        throw new Error('Rate limit exceeded. Please try again in a moment.');
-      }
-      
-      if (response.status === 402) {
-        throw new Error('Payment required. Please add credits to your Lovable AI workspace.');
-      }
-      
-      throw new Error(`AI API error: ${response.status}`);
+      throw new Error(`AI API error: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
-    const aiResponse = data.choices?.[0]?.message?.content;
+    
+    // Extract text from Gemini response structure
+    const aiResponse = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
     if (!aiResponse) {
       throw new Error('No response from AI');
@@ -121,4 +120,4 @@ function getMentorStyle(mentorId: string): string {
   };
 
   return styles[mentorId] || 'Supportive and clear. You break down concepts step by step.';
-    }
+      }
