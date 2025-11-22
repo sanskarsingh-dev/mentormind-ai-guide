@@ -44,45 +44,41 @@ Return ONLY a JSON object in this exact format:
 
 For short answer questions, omit the "options" field.`;
 
-    const response = await fetch('https://sstqxkceeybmpaqmbmuh.supabase.co/functions/v1/chat-gemini', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${GEMINI_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'google/gemini-2.5-flash-lite',
-        messages: [
-          { role: 'user', content: prompt }
-        ],
-        temperature: 0.7,
-        max_tokens: 2048,
-      }),
-    });
+    // Call Google Gemini API Direct
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lite-latest:generateContent?key=${GEMINI_API_KEY}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contents: [{
+            parts: [{ text: prompt }]
+          }],
+          generationConfig: {
+            temperature: 0.7,
+            maxOutputTokens: 2048,
+            responseMimeType: "application/json" // Forces valid JSON output
+          }
+        }),
+      }
+    );
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Lovable AI error:', response.status, errorText);
-      
-      if (response.status === 429) {
-        throw new Error('Rate limit exceeded. Please try again in a moment.');
-      }
-      
-      if (response.status === 402) {
-        throw new Error('Payment required. Please add credits to your Lovable AI workspace.');
-      }
-      
+      console.error('Gemini API error:', response.status, errorText);
       throw new Error(`Failed to generate quiz: ${response.status}`);
     }
 
     const data = await response.json();
-    const aiResponse = data.choices?.[0]?.message?.content;
+    const aiResponse = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
     if (!aiResponse) {
       throw new Error('No response from AI');
     }
 
-    // Extract JSON from response (remove markdown code blocks if present)
+    // Clean up JSON just in case (though responseMimeType usually handles it)
     let jsonText = aiResponse.trim();
     if (jsonText.startsWith('```json')) {
       jsonText = jsonText.slice(7);
