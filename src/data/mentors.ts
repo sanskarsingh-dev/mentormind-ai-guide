@@ -127,7 +127,7 @@ export const mentors: Mentor[] = [
     subject: "Vocal Music",
     description: "Melodious guide to the joy of singing and music",
     avatar: selenaImg,
-    greeting: "Namaste! I'm Miss Selena, your vocal music mentor. Let's discover the beauty of your voice and explore the world of music together!",
+    greeting: "Hey!I'm Miss Selena, your vocal music mentor. Ready to hit the right notes together? 🎵Let's discover the harmony of your voice and compose something beautiful. I might make you fall in love with singing! 😉",
     expertise: ["Singing Techniques", "Music Theory", "Voice Training", "Performance"]
   }
 ];
