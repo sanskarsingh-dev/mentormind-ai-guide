@@ -205,9 +205,7 @@ const Chat = () => {
             >
               <div className="flex items-start gap-3">
                 {message.role === 'assistant' && (
-                  <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
-                    <img src={mentor.avatar} alt={mentor.name} className="w-full h-full object-cover" />
-                  </div>
+                  
                 )}
                 <div className="flex-1">
                   <p className={message.role === 'user' ? 'text-white' : 'text-foreground'}>
