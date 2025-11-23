@@ -197,20 +197,18 @@ const Chat = () => {
             className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
           >
             <Card
-              className={`max-w-2xl p-4 rounded-3xl ${
+              /* CHANGE 1: Increased width from max-w-2xl to max-w-[90%] */
+              className={`max-w-[90%] p-4 rounded-3xl ${
                 message.role === 'user'
                   ? 'bg-gradient-to-r from-purple-500 via-blue-500 to-pink-500 text-white'
                   : 'glass-card'
               }`}
             >
               <div className="flex items-start gap-3">
-                {message.role === 'assistant' && (
-                  <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
-                    <img src={mentor.avatar} alt={mentor.name} className="w-full h-full object-cover" />
-                  </div>
-                )}
+                {/* CHANGE 2: Removed the Image/Avatar block from here */}
+                
                 <div className="flex-1">
-                  <p className={message.role === 'user' ? 'text-white' : 'text-foreground'}>
+                  <p className={`whitespace-pre-wrap ${message.role === 'user' ? 'text-white' : 'text-foreground'}`}>
                     {message.content}
                   </p>
                 </div>
@@ -259,7 +257,8 @@ const Chat = () => {
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Ask anything..."
-              className="rounded-full pr-12 bg-white/80"
+              /* CHANGE 3: Added 'text-gray-900 placeholder:text-gray-500' to fix dark mode visibility */
+              className="rounded-full pr-12 bg-white/80 text-gray-900 placeholder:text-gray-500"
               disabled={isLoading}
             />
           </div>
