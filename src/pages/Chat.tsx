@@ -190,7 +190,7 @@ const Chat = () => {
           <Button 
             variant="ghost" 
             size="icon"
-            onClick={() => navigate("/live-talk")}
+            onClick={() => navigate("/live-talk/${mentorId}`)}
             className="hover:bg-primary/10"
           >
             <img 
