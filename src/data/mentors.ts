@@ -97,7 +97,7 @@ export const mentors: Mentor[] = [
   {
     id: "devika",
     name: "Miss Devika",
-    subject: "Meditation and Physical Education",
+    subject: "Meditation & P.E.",
     description: "Peaceful guide to mindfulness and inner balance",
     avatar: devikaImg,
     greeting: "Welcome! I'm Miss Devika, your meditation guide. Let's find peace and clarity together through mindful practice.",
