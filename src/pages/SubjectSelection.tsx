@@ -63,7 +63,7 @@ const subjectIcons: Record<string, any> = {
   // These keys must match mentors.ts exactly (handling spaces & special chars)
   "Computer Science": ComputerIcon,
   "History & Civics": HistoryIcon,
-  "Meditation and Physical Education": MeditationIcon,
+  "Meditation & P.E.": MeditationIcon,
   "Vocal Music": MusicIcon,
 };
 
