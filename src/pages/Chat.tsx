@@ -17,6 +17,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+// Import the call icon
+import callMentorIcon from "@/assets/subjects/call-mentor.svg";
 
 interface Message {
   role: "user" | "assistant";
@@ -89,7 +91,6 @@ const Chat = () => {
 
   const speakText = (text: string) => {
     if ('speechSynthesis' in window) {
-      // Cancel any ongoing speech
       window.speechSynthesis.cancel();
       
       const utterance = new SpeechSynthesisUtterance(text);
@@ -184,9 +185,25 @@ const Chat = () => {
           </div>
         </div>
 
-        <Button variant="ghost" size="icon">
-          <MoreVertical className="w-5 h-5" />
-        </Button>
+        <div className="flex items-center gap-2">
+          {/* Call Mentor Button */}
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={() => navigate("/live-talk")}
+            className="hover:bg-primary/10"
+          >
+            <img 
+              src={callMentorIcon} 
+              alt="Call Mentor" 
+              className="w-6 h-6"
+            />
+          </Button>
+          
+          <Button variant="ghost" size="icon">
+            <MoreVertical className="w-5 h-5" />
+          </Button>
+        </div>
       </div>
 
       {/* Messages */}
@@ -197,36 +214,34 @@ const Chat = () => {
             className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
           >
             <Card
-              /* CHANGE 1: Increased width from max-w-2xl to max-w-[90%] */
-              className={`max-w-[90%] p-4 rounded-3xl ${
+              className={`relative max-w-[90%] p-4 rounded-3xl ${
                 message.role === 'user'
                   ? 'bg-gradient-to-r from-purple-500 via-blue-500 to-pink-500 text-white'
                   : 'glass-card'
               }`}
             >
-              <div className="flex items-start gap-3">
-                {/* CHANGE 2: Removed the Image/Avatar block from here */}
-                
-                <div className="flex-1">
-                  <p className={`whitespace-pre-wrap ${message.role === 'user' ? 'text-white' : 'text-foreground'}`}>
-                    {message.content}
-                  </p>
-                </div>
-                {message.role === 'assistant' && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="flex-shrink-0"
-                    onClick={() => isSpeaking ? stopSpeaking() : speakText(message.content)}
-                  >
-                    {isSpeaking ? (
-                      <VolumeX className="w-4 h-4" />
-                    ) : (
-                      <Volume2 className="w-4 h-4" />
-                    )}
-                  </Button>
-                )}
+              {/* Text Content */}
+              <div className={`${message.role === 'assistant' ? 'pb-6' : ''}`}>
+                <p className={`whitespace-pre-wrap leading-relaxed ${message.role === 'user' ? 'text-white' : 'text-foreground'}`}>
+                  {message.content}
+                </p>
               </div>
+
+              {/* Speaker Icon - Absolutely positioned to corner */}
+              {message.role === 'assistant' && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute bottom-2 right-2 w-8 h-8 hover:bg-primary/10 rounded-full"
+                  onClick={() => isSpeaking ? stopSpeaking() : speakText(message.content)}
+                >
+                  {isSpeaking ? (
+                    <VolumeX className="w-4 h-4 text-primary" />
+                  ) : (
+                    <Volume2 className="w-4 h-4 text-primary" />
+                  )}
+                </Button>
+              )}
             </Card>
           </div>
         ))}
@@ -257,7 +272,6 @@ const Chat = () => {
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Ask anything..."
-              /* CHANGE 3: Added 'text-gray-900 placeholder:text-gray-500' to fix dark mode visibility */
               className="rounded-full pr-12 bg-white/80 text-gray-900 placeholder:text-gray-500"
               disabled={isLoading}
             />
