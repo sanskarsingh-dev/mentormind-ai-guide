@@ -53,7 +53,7 @@ const subjectIcons: Record<string, any> = {
   // These keys must have quotes to handle spaces & special characters
   "Computer Science": ComputerIcon,
   "History & Civics": HistoryIcon,
-  "Meditation and Physical Education": MeditationIcon,
+  "Meditation & P.E.": MeditationIcon,
   "Vocal Music": MusicIcon, 
 };
 
