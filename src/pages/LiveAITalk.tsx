@@ -1,178 +1,254 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { Card } from "@/components/ui/card";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { mentors } from "@/data/mentors"; // Assuming this exports an array of mentor objects
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { ArrowLeft, Mic, X, Grid3x3 } from "lucide-react";
+import { SubjectSelectionModal } from "@/components/SubjectSelectionModal";
+import { mentors } from "@/data/mentors";
 
-import { Phone, Video, Mic, MicOff, PhoneOff, ArrowLeft } from "lucide-react";
-import { toast } from "sonner";
-
-// Fixed: Added Mentor interface (define based on your data/mentors.ts structure; adjust fields as needed)
-interface Mentor {
-  id: string;
-  name: string;
-  avatar: string;
-  subject: string;
-  greeting?: string; // Optional, if used elsewhere
-}
+type ConnectionState = "idle" | "selecting" | "connecting" | "connected" | "ended";
 
 const LiveAITalk = () => {
-  const { mentorId } = useParams<{ mentorId: string }>();
   const navigate = useNavigate();
-  
-  // Fixed: Used proper Mentor type
-  const [activeMentor, setActiveMentor] = useState<Mentor | null>(
-    mentorId ? (mentors as Mentor[]).find(m => m.id === mentorId) || null : null
-  );
-  
-  const [isCallActive, setIsCallActive] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
+  const [connectionState, setConnectionState] = useState<ConnectionState>("idle");
+  const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
+  const [selectedMentor, setSelectedMentor] = useState<any>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [sessionTime, setSessionTime] = useState(600); // 10 minutes default
+  const [statusText, setStatusText] = useState("");
 
-  // EFFECT: Watch for URL changes.
-  // If a user navigates here with an ID, auto-start the session setup.
   useEffect(() => {
-    if (mentorId) {
-      const foundMentor = (mentors as Mentor[]).find(m => m.id === mentorId);
-      if (foundMentor) {
-        setActiveMentor(foundMentor);
-        // Optionally: setIsCallActive(true); 
-      } else {
-        toast.error("Mentor not found");
-        navigate("/subjects"); // Redirect if invalid ID
-      }
+    let timer: NodeJS.Timeout;
+    if (connectionState === "connected" && sessionTime > 0) {
+      timer = setInterval(() => {
+        setSessionTime((prev) => {
+          if (prev <= 1) {
+            setConnectionState("ended");
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
     }
-  }, [mentorId, navigate]);
+    return () => clearInterval(timer);
+  }, [connectionState, sessionTime]);
 
-  const handleStartCall = (mentor: Mentor) => {
-    setActiveMentor(mentor);
-    setIsCallActive(true);
+  const handleSubjectSelect = (subject: string) => {
+    const mentor = mentors.find((m) => m.subject === subject);
+    if (mentor) {
+      setSelectedSubject(subject);
+      setSelectedMentor(mentor);
+      setIsModalOpen(false);
+      setConnectionState("connecting");
+      setStatusText(`You will be connected with ${mentor.name}`);
+
+      // Simulate connection after 2.5 seconds
+      setTimeout(() => {
+        setConnectionState("connected");
+        setStatusText(`You are connected to ${mentor.name}`);
+      }, 2500);
+    }
+  };
+
+  const handleReconnect = () => {
+    setSessionTime(600);
+    setConnectionState("connecting");
+    setStatusText(`You will be connected with ${selectedMentor.name}`);
+    setTimeout(() => {
+      setConnectionState("connected");
+      setStatusText(`You are connected to ${selectedMentor.name}`);
+    }, 2500);
+  };
+
+  const handleReselectSubject = () => {
+    setConnectionState("idle");
+    setSelectedSubject(null);
+    setSelectedMentor(null);
+    setIsModalOpen(true);
   };
 
   const handleEndCall = () => {
-    setIsCallActive(false);
-    setIsMuted(false);
-    // Decide where to go after call ends:
-    // Option A: Go back to chat
-    if (activeMentor) {
-      navigate(`/chat/${activeMentor.id}`);
-    } else {
-      // Option B: Reset local state
-      setActiveMentor(null);
-    }
+    setConnectionState("ended");
+    setIsListening(false);
   };
 
-  // --- VIEW: ACTIVE CALL INTERFACE ---
-  if (activeMentor) {
-    return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4 relative overflow-hidden">
-        {/* Ambient Background */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/20 via-slate-950 to-slate-950" />
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
+  };
 
-        {/* Mentor Avatar pulsing effect */}
-        {/* Fixed: Used backticks for template literal in className */}
-        <div className={`relative z-10 w-32 h-32 rounded-full overflow-hidden blur-xl transition-all duration-1000 ${isCallActive ? 'animate-pulse scale-150' : ''}`}>
-          <div className="w-full h-full relative">
-            <img
-              src={activeMentor.avatar}
-              alt={activeMentor.name}
-              className="w-full h-full object-cover"
-            />
-            {isCallActive && (
-              <div className="absolute bottom-0 right-0 w-2 h-2 bg-green-500 rounded-full animate-ping" />
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5 relative overflow-hidden">
+      {/* Animated Background Bubbles */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="bubble-float absolute top-20 left-10 w-32 h-32 rounded-full bg-primary/10 blur-2xl animate-pulse" />
+        <div className="bubble-float absolute top-40 right-20 w-40 h-40 rounded-full bg-accent/10 blur-2xl animate-pulse" style={{ animationDelay: "1s" }} />
+        <div className="bubble-float absolute bottom-32 left-1/4 w-36 h-36 rounded-full bg-secondary/10 blur-2xl animate-pulse" style={{ animationDelay: "2s" }} />
+      </div>
+
+      {/* Header */}
+      <div className="relative z-10 container mx-auto px-4 py-4 flex items-center justify-between">
+        <Button
+          variant="ghost"
+          onClick={() => navigate("/dashboard")}
+          className="gap-2"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Dashboard
+        </Button>
+        <ThemeToggle />
+      </div>
+
+      {/* Main Content */}
+      <div className="relative z-10 container mx-auto px-4 flex flex-col items-center justify-center py-4" style={{ minHeight: 'calc(100vh - 180px)', maxHeight: 'calc(100vh - 180px)' }}>
+        
+        {/* Session Timer (when connected) */}
+        {connectionState === "connected" && (
+          <div className="mb-2 px-4 py-2 rounded-full bg-primary/20 border border-primary/40 backdrop-blur-lg">
+            <span className="text-sm font-semibold text-primary">{formatTime(sessionTime)}</span>
+          </div>
+        )}
+
+        {/* Central Sphere with Animation */}
+        <div className="relative mb-4 sm:mb-6">
+          {/* Animated Rings */}
+          {isListening && (
+            <>
+              <div className="absolute inset-0 -m-8 rounded-full border-2 border-primary/30 animate-ping" />
+              <div className="absolute inset-0 -m-12 rounded-full border-2 border-accent/20 animate-ping" style={{ animationDelay: "0.3s" }} />
+            </>
+          )}
+
+          {/* Main Sphere */}
+          <div className="relative w-48 h-48 sm:w-64 sm:h-64 rounded-full bg-gradient-to-br from-primary/20 via-accent/20 to-secondary/20 backdrop-blur-2xl shadow-2xl shadow-primary/50 flex items-center justify-center animate-float">
+            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary/40 to-accent/40 blur-xl animate-pulse" />
+            
+            {/* Mentor Avatar (when connecting/connected) - Circular */}
+            {(connectionState === "connecting" || connectionState === "connected" || connectionState === "ended") && selectedMentor && (
+              <div className="relative z-10 animate-scale-in">
+                <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden border-4 border-primary/40 shadow-glow">
+                  <img
+                    src={selectedMentor.avatar}
+                    alt={selectedMentor.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                {connectionState === "connected" && (
+                  <div className="absolute inset-0 -m-2 rounded-full border-2 border-primary/50 animate-pulse" />
+                )}
+              </div>
+            )}
+
+            {/* Idle State - Inner Glow */}
+            {connectionState === "idle" && (
+              <div className="relative z-10 w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-gradient-to-br from-primary/60 to-accent/60 blur-md animate-pulse" />
             )}
           </div>
         </div>
 
-        {/* Hidden on mobile, shown on md+ */}
-        <div className="w-32 h-32 rounded-full overflow-hidden hidden md:block">
-          <img
-            src={activeMentor.avatar}
-            alt={activeMentor.name}
-            className="w-full h-full object-cover"
-          />
+        {/* Status Text */}
+        <div className="text-center space-y-2 mb-6 px-4">
+          {connectionState === "idle" && (
+            <p className="text-base sm:text-lg text-muted-foreground">Ready to start learning</p>
+          )}
+          
+          {(connectionState === "connecting" || connectionState === "connected") && selectedMentor && (
+            <>
+              <p className="text-lg sm:text-xl font-semibold text-foreground animate-fade-in">
+                {statusText}
+              </p>
+              <p className="text-xs sm:text-sm text-muted-foreground">
+                {selectedMentor.subject} expert
+              </p>
+            </>
+          )}
+
+          {connectionState === "ended" && (
+            <p className="text-lg sm:text-xl font-semibold text-foreground">Call Ended</p>
+          )}
         </div>
 
-        {isCallActive && (
-          <div className="absolute bottom-0 right-0 w-2 h-2 bg-green-500 rounded-full animate-ping" />
+        {/* Subject Selection Box (idle or selecting) */}
+        {(connectionState === "idle" || connectionState === "selecting") && (
+          <Button
+            onClick={() => setIsModalOpen(true)}
+            variant="outline"
+            className="px-4 py-4 sm:px-6 sm:py-6 rounded-2xl glass-card border-2 border-primary/30 hover:border-primary/60 transition-all mb-6 text-sm sm:text-base"
+          >
+            <span>Which subject do you want to ask?</span>
+          </Button>
         )}
 
-        <div className="text-center space-y-2">
-          <h2 className="text-2xl font-bold text-white">{activeMentor.name}</h2>
-          <p className="text-slate-400">Connected at 00:12</p>
-        </div>
-
-        {/* Call Controls */}
-        <div className="flex items-center gap-6 mt-8">
-          <Button
-            variant="outline"
-            size="icon"
-            className={`${isMuted ? 'bg-white text-slate-950 hover:bg-slate-200' : 'bg-slate-800 text-white hover:bg-slate-700'}`}
-            onClick={() => setIsMuted(!isMuted)}
-          >
-            {isMuted ? <MicOff className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
-          </Button>
-
-          <Button
-            variant="destructive"
-            size="icon"
-            className="bg-red-600 hover:bg-red-700"
-            onClick={handleEndCall}
-          >
-            <PhoneOff className="w-6 h-6" />
-          </Button>
-
-          <Button
-            variant="outline"
-            size="icon"
-            className="bg-slate-800 text-white hover:bg-slate-700"
-          >
-            <Video className="w-6 h-6" />
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
-  // --- VIEW: MENTOR SELECTION LIST (Fallback if no ID provided) ---
-  return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-4xl mx-auto space-y-8">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" onClick={() => navigate("/subjects")}>
-            <ArrowLeft className="w-5 h-5" />
-          </Button>
-          <h1 className="text-3xl font-bold">Live Mentor Talk</h1>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {(mentors as Mentor[]).map((mentor) => (
-            <Card
-              key={mentor.id}
-              className="p-6 hover:shadow-lg transition-all cursor-pointer border-slate-200"
-              onClick={() => handleStartCall(mentor)}
+        {/* End State Actions */}
+        {connectionState === "ended" && (
+          <div className="flex flex-col items-center gap-3 animate-fade-in w-full max-w-xs px-4">
+            <Button
+              onClick={handleReconnect}
+              className="w-full px-6 py-3 rounded-xl bg-gradient-to-r from-primary to-accent hover:opacity-90 text-sm sm:text-base"
             >
-              {/* Fixed: Used backticks for template literal */}
-              <div className={`relative z-10 w-full h-48 rounded-lg overflow-hidden blur-xl transition-all duration-1000 ${isCallActive ? 'animate-pulse scale-150' : ''}`}>
-                <img
-                  src={mentor.avatar}
-                  alt={mentor.name}
-                  className="w-full h-full object-cover"
-                />
-              </div>
+              Reconnect
+            </Button>
+            <Button
+              onClick={handleReselectSubject}
+              variant="outline"
+              className="w-full px-6 py-3 rounded-xl text-sm sm:text-base"
+            >
+              Reselect Subject
+            </Button>
+            <Button
+              onClick={() => navigate("/dashboard")}
+              variant="ghost"
+              className="w-full px-6 py-3 rounded-xl text-sm sm:text-base"
+            >
+              Back to Dashboard
+            </Button>
+          </div>
+        )}
 
-              <div>
-                <h3 className="font-semibold text-lg">{mentor.name}</h3>
-                <p className="text-sm text-muted-foreground">{mentor.subject}</p>
-              </div>
+        {/* Bottom Action Buttons */}
+        {connectionState !== "ended" && connectionState !== "idle" && (
+          <div className="flex items-center justify-center gap-8 mt-8">
+            {/* History/Menu Button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="w-14 h-14 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 hover:from-primary/30 hover:to-accent/30"
+            >
+              <Grid3x3 className="w-5 h-5" />
+            </Button>
 
-              <Button className="w-full mt-4 gap-2">
-                <Phone className="w-4 h-4" />
-                Start Call
-              </Button>
-            </Card>
-          ))}
-        </div>
+            {/* Microphone Button */}
+            <Button
+              size="icon"
+              onClick={() => setIsListening(!isListening)}
+              className={`w-20 h-20 rounded-full bg-gradient-to-br from-primary to-accent shadow-glow transition-all ${
+                isListening ? "scale-110 animate-pulse" : "hover:scale-105"
+              }`}
+            >
+              <Mic className="w-8 h-8" />
+            </Button>
+
+            {/* Close/End Button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleEndCall}
+              className="w-14 h-14 rounded-full bg-gradient-to-br from-destructive/20 to-destructive/30 hover:from-destructive/30 hover:to-destructive/40"
+            >
+              <X className="w-5 h-5" />
+            </Button>
+          </div>
+        )}
       </div>
+
+      {/* Subject Selection Modal */}
+      <SubjectSelectionModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSelect={handleSubjectSelect}
+      />
     </div>
   );
 };
