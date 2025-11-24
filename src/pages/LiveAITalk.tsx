@@ -1,254 +1,140 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/ThemeToggle";
-import { ArrowLeft, Mic, X, Grid3x3 } from "lucide-react";
-import { SubjectSelectionModal } from "@/components/SubjectSelectionModal";
-import { mentors } from "@/data/mentors.ts";
-
-type ConnectionState = "idle" | "selecting" | "connecting" | "connected" | "ended";
+import { mentors } from "@/data/mentors.ts"; 
+import { Phone, Video, Mic, MicOff, PhoneOff, ArrowLeft } from "lucide-react";
 
 const LiveAITalk = () => {
+  const { mentorId } = useParams<{ mentorId: string }>(); 
   const navigate = useNavigate();
-  const [connectionState, setConnectionState] = useState<ConnectionState>("idle");
-  const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
-  const [selectedMentor, setSelectedMentor] = useState<any>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isListening, setIsListening] = useState(false);
-  const [sessionTime, setSessionTime] = useState(600); // 10 minutes default
-  const [statusText, setStatusText] = useState("");
+  
+  // State is derived from whether a URL parameter exists
+  const [activeMentor, setActiveMentor] = useState(
+    mentorId ? mentors.find(m => m.id === mentorId) : null
+  );
+  
+  const [isMuted, setIsMuted] = useState(false);
 
+  // 1. URL SYNC EFFECT
+  // This watches the URL. If it changes to /live-talk/lisa, it sets Lisa as active.
   useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (connectionState === "connected" && sessionTime > 0) {
-      timer = setInterval(() => {
-        setSessionTime((prev) => {
-          if (prev <= 1) {
-            setConnectionState("ended");
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
+    if (mentorId) {
+      const foundMentor = mentors.find(m => m.id === mentorId);
+      if (foundMentor) {
+        setActiveMentor(foundMentor);
+      }
+    } else {
+      // If URL is just /live-talk, clear the active mentor
+      setActiveMentor(null);
     }
-    return () => clearInterval(timer);
-  }, [connectionState, sessionTime]);
+  }, [mentorId]);
 
-  const handleSubjectSelect = (subject: string) => {
-    const mentor = mentors.find((m) => m.subject === subject);
-    if (mentor) {
-      setSelectedSubject(subject);
-      setSelectedMentor(mentor);
-      setIsModalOpen(false);
-      setConnectionState("connecting");
-      setStatusText(`You will be connected with ${mentor.name}`);
-
-      // Simulate connection after 2.5 seconds
-      setTimeout(() => {
-        setConnectionState("connected");
-        setStatusText(`You are connected to ${mentor.name}`);
-      }, 2500);
-    }
+  // 2. START CALL (Navigates to URL)
+  // Instead of setting state locally, we just change the URL.
+  // The useEffect above handles the rest.
+  const handleStartCall = (mentorId: string) => {
+    navigate(`/live-talk/${mentorId}`);
   };
 
-  const handleReconnect = () => {
-    setSessionTime(600);
-    setConnectionState("connecting");
-    setStatusText(`You will be connected with ${selectedMentor.name}`);
-    setTimeout(() => {
-      setConnectionState("connected");
-      setStatusText(`You are connected to ${selectedMentor.name}`);
-    }, 2500);
-  };
-
-  const handleReselectSubject = () => {
-    setConnectionState("idle");
-    setSelectedSubject(null);
-    setSelectedMentor(null);
-    setIsModalOpen(true);
-  };
-
+  // 3. END CALL
+  // Removes the ID from the URL, returning to the list view
   const handleEndCall = () => {
-    setConnectionState("ended");
-    setIsListening(false);
+    setIsMuted(false);
+    navigate("/live-talk");
   };
 
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, "0")}`;
-  };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5 relative overflow-hidden">
-      {/* Animated Background Bubbles */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="bubble-float absolute top-20 left-10 w-32 h-32 rounded-full bg-primary/10 blur-2xl animate-pulse" />
-        <div className="bubble-float absolute top-40 right-20 w-40 h-40 rounded-full bg-accent/10 blur-2xl animate-pulse" style={{ animationDelay: "1s" }} />
-        <div className="bubble-float absolute bottom-32 left-1/4 w-36 h-36 rounded-full bg-secondary/10 blur-2xl animate-pulse" style={{ animationDelay: "2s" }} />
-      </div>
-
-      {/* Header */}
-      <div className="relative z-10 container mx-auto px-4 py-4 flex items-center justify-between">
-        <Button
-          variant="ghost"
-          onClick={() => navigate("/dashboard")}
-          className="gap-2"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Dashboard
-        </Button>
-        <ThemeToggle />
-      </div>
-
-      {/* Main Content */}
-      <div className="relative z-10 container mx-auto px-4 flex flex-col items-center justify-center py-4" style={{ minHeight: 'calc(100vh - 180px)', maxHeight: 'calc(100vh - 180px)' }}>
-        
-        {/* Session Timer (when connected) */}
-        {connectionState === "connected" && (
-          <div className="mb-2 px-4 py-2 rounded-full bg-primary/20 border border-primary/40 backdrop-blur-lg">
-            <span className="text-sm font-semibold text-primary">{formatTime(sessionTime)}</span>
+  // --- VIEW: ACTIVE CALL ---
+  if (activeMentor) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4">
+        <div className="flex flex-col items-center gap-8 w-full max-w-md">
+          {/* Avatar Area */}
+          <div className="relative">
+            <div className="absolute inset-0 rounded-full bg-primary/20 blur-xl animate-pulse" />
+            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-slate-800 relative z-10">
+              <img 
+                src={activeMentor.avatar} 
+                alt={activeMentor.name} 
+                className="w-full h-full object-cover"
+              />
+            </div>
           </div>
-        )}
 
-        {/* Central Sphere with Animation */}
-        <div className="relative mb-4 sm:mb-6">
-          {/* Animated Rings */}
-          {isListening && (
-            <>
-              <div className="absolute inset-0 -m-8 rounded-full border-2 border-primary/30 animate-ping" />
-              <div className="absolute inset-0 -m-12 rounded-full border-2 border-accent/20 animate-ping" style={{ animationDelay: "0.3s" }} />
-            </>
-          )}
-
-          {/* Main Sphere */}
-          <div className="relative w-48 h-48 sm:w-64 sm:h-64 rounded-full bg-gradient-to-br from-primary/20 via-accent/20 to-secondary/20 backdrop-blur-2xl shadow-2xl shadow-primary/50 flex items-center justify-center animate-float">
-            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary/40 to-accent/40 blur-xl animate-pulse" />
-            
-            {/* Mentor Avatar (when connecting/connected) - Circular */}
-            {(connectionState === "connecting" || connectionState === "connected" || connectionState === "ended") && selectedMentor && (
-              <div className="relative z-10 animate-scale-in">
-                <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden border-4 border-primary/40 shadow-glow">
-                  <img
-                    src={selectedMentor.avatar}
-                    alt={selectedMentor.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                {connectionState === "connected" && (
-                  <div className="absolute inset-0 -m-2 rounded-full border-2 border-primary/50 animate-pulse" />
-                )}
-              </div>
-            )}
-
-            {/* Idle State - Inner Glow */}
-            {connectionState === "idle" && (
-              <div className="relative z-10 w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-gradient-to-br from-primary/60 to-accent/60 blur-md animate-pulse" />
-            )}
+          <div className="text-center space-y-2">
+            <h2 className="text-2xl font-bold text-white">{activeMentor.name}</h2>
+            <p className="text-slate-400">Connected</p>
           </div>
-        </div>
 
-        {/* Status Text */}
-        <div className="text-center space-y-2 mb-6 px-4">
-          {connectionState === "idle" && (
-            <p className="text-base sm:text-lg text-muted-foreground">Ready to start learning</p>
-          )}
-          
-          {(connectionState === "connecting" || connectionState === "connected") && selectedMentor && (
-            <>
-              <p className="text-lg sm:text-xl font-semibold text-foreground animate-fade-in">
-                {statusText}
-              </p>
-              <p className="text-xs sm:text-sm text-muted-foreground">
-                {selectedMentor.subject} expert
-              </p>
-            </>
-          )}
-
-          {connectionState === "ended" && (
-            <p className="text-lg sm:text-xl font-semibold text-foreground">Call Ended</p>
-          )}
-        </div>
-
-        {/* Subject Selection Box (idle or selecting) */}
-        {(connectionState === "idle" || connectionState === "selecting") && (
-          <Button
-            onClick={() => setIsModalOpen(true)}
-            variant="outline"
-            className="px-4 py-4 sm:px-6 sm:py-6 rounded-2xl glass-card border-2 border-primary/30 hover:border-primary/60 transition-all mb-6 text-sm sm:text-base"
-          >
-            <span>Which subject do you want to ask?</span>
-          </Button>
-        )}
-
-        {/* End State Actions */}
-        {connectionState === "ended" && (
-          <div className="flex flex-col items-center gap-3 animate-fade-in w-full max-w-xs px-4">
+          {/* Call Controls */}
+          <div className="flex items-center gap-6 mt-8">
             <Button
-              onClick={handleReconnect}
-              className="w-full px-6 py-3 rounded-xl bg-gradient-to-r from-primary to-accent hover:opacity-90 text-sm sm:text-base"
-            >
-              Reconnect
-            </Button>
-            <Button
-              onClick={handleReselectSubject}
               variant="outline"
-              className="w-full px-6 py-3 rounded-xl text-sm sm:text-base"
-            >
-              Reselect Subject
-            </Button>
-            <Button
-              onClick={() => navigate("/dashboard")}
-              variant="ghost"
-              className="w-full px-6 py-3 rounded-xl text-sm sm:text-base"
-            >
-              Back to Dashboard
-            </Button>
-          </div>
-        )}
-
-        {/* Bottom Action Buttons */}
-        {connectionState !== "ended" && connectionState !== "idle" && (
-          <div className="flex items-center justify-center gap-8 mt-8">
-            {/* History/Menu Button */}
-            <Button
-              variant="ghost"
               size="icon"
-              className="w-14 h-14 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 hover:from-primary/30 hover:to-accent/30"
+              className={`w-14 h-14 rounded-full border-none ${isMuted ? 'bg-white text-slate-900' : 'bg-slate-800 text-white'}`}
+              onClick={() => setIsMuted(!isMuted)}
             >
-              <Grid3x3 className="w-5 h-5" />
+              {isMuted ? <MicOff className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
             </Button>
 
-            {/* Microphone Button */}
             <Button
+              variant="destructive"
               size="icon"
-              onClick={() => setIsListening(!isListening)}
-              className={`w-20 h-20 rounded-full bg-gradient-to-br from-primary to-accent shadow-glow transition-all ${
-                isListening ? "scale-110 animate-pulse" : "hover:scale-105"
-              }`}
-            >
-              <Mic className="w-8 h-8" />
-            </Button>
-
-            {/* Close/End Button */}
-            <Button
-              variant="ghost"
-              size="icon"
+              className="w-16 h-16 rounded-full hover:bg-red-600"
               onClick={handleEndCall}
-              className="w-14 h-14 rounded-full bg-gradient-to-br from-destructive/20 to-destructive/30 hover:from-destructive/30 hover:to-destructive/40"
             >
-              <X className="w-5 h-5" />
+              <PhoneOff className="w-8 h-8" />
+            </Button>
+
+            <Button
+              variant="outline"
+              size="icon"
+              className="w-14 h-14 rounded-full border-none bg-slate-800 text-white"
+            >
+              <Video className="w-6 h-6" />
             </Button>
           </div>
-        )}
+        </div>
       </div>
+    );
+  }
 
-      {/* Subject Selection Modal */}
-      <SubjectSelectionModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSelect={handleSubjectSelect}
-      />
+  // --- VIEW: MENTOR LIST ---
+  return (
+    <div className="min-h-screen bg-background p-6">
+      <div className="max-w-4xl mx-auto space-y-8">
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" onClick={() => navigate("/subjects")}>
+            <ArrowLeft className="w-5 h-5" />
+          </Button>
+          <h1 className="text-3xl font-bold">Live Mentor Talk</h1>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {mentors.map((mentor) => (
+            <Card 
+              key={mentor.id}
+              className="p-6 hover:shadow-lg transition-all cursor-pointer group"
+              // CHANGE: Only update URL here
+              onClick={() => handleStartCall(mentor.id)}
+            >
+              <div className="flex flex-col items-center text-center gap-4">
+                <div className="w-20 h-20 rounded-full overflow-hidden ring-4 ring-primary/10">
+                  <img src={mentor.avatar} alt={mentor.name} className="w-full h-full object-cover" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg">{mentor.name}</h3>
+                  <p className="text-sm text-muted-foreground">{mentor.subject}</p>
+                </div>
+                <Button className="w-full gap-2 group-hover:bg-primary group-hover:text-white">
+                  <Phone className="w-4 h-4" />
+                  Start Call
+                </Button>
+              </div>
+            </Card>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
