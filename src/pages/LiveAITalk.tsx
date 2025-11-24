@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-// ADDED: useParams to read the url
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -7,52 +6,58 @@ import { ArrowLeft, Mic, X, Grid3x3 } from "lucide-react";
 import { SubjectSelectionModal } from "@/components/SubjectSelectionModal";
 import { mentors } from "@/data/mentors.ts";
 
+// Define the states exactly like the original for smooth transitions
 type ConnectionState = "idle" | "selecting" | "connecting" | "connected" | "ended";
 
 const LiveAITalk = () => {
   const navigate = useNavigate();
-  // ADDED: Get the name from URL
-  const { mentorName } = useParams(); 
+  // We use the URL parameter to determine WHICH mentor we are talking to
+  const { mentorName } = useParams<{ mentorName: string }>(); 
   
   const [connectionState, setConnectionState] = useState<ConnectionState>("idle");
-  const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
   const [selectedMentor, setSelectedMentor] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [sessionTime, setSessionTime] = useState(600); 
   const [statusText, setStatusText] = useState("");
 
-  // ADDED: Effect to handle URL changes and trigger connection
+  // 1. PRIMARY EFFECT: Watch the URL. 
+  // If the URL has a name, we start the connection logic. 
+  // If not, we stay in "idle" mode.
   useEffect(() => {
     if (mentorName) {
-      // Find mentor by name (case insensitive)
+      // Decode the URL parameter (e.g., "miss%20lisa" -> "Miss Lisa")
+      const decodedName = decodeURIComponent(mentorName);
       const mentor = mentors.find(
-        (m) => m.name.toLowerCase() === mentorName.toLowerCase()
+        (m) => m.name.toLowerCase() === decodedName.toLowerCase()
       );
 
       if (mentor) {
         setSelectedMentor(mentor);
-        setSelectedSubject(mentor.subject);
-        setIsModalOpen(false);
-        setConnectionState("connecting");
-        setStatusText(`You will be connected with ${mentor.name}`);
+        
+        // Only start the "connecting" animation if we aren't already connected/ended
+        // This prevents the loop/freeze issue
+        if (connectionState === "idle" || connectionState === "selecting") {
+            setConnectionState("connecting");
+            setStatusText(`You will be connected with ${mentor.name}`);
 
-        // Simulate connection
-        const timer = setTimeout(() => {
-          setConnectionState("connected");
-          setStatusText(`You are connected to ${mentor.name}`);
-        }, 2500);
-
-        return () => clearTimeout(timer);
+            // The simulation delay
+            const timer = setTimeout(() => {
+                setConnectionState("connected");
+                setStatusText(`You are connected to ${mentor.name}`);
+            }, 2500);
+            
+            return () => clearTimeout(timer);
+        }
       }
     } else {
-      // If no name in URL, reset to idle
+      // No name in URL? Reset to start.
       setConnectionState("idle");
       setSelectedMentor(null);
     }
-  }, [mentorName]);
+  }, [mentorName]); // Only re-run if URL changes
 
-  // Timer logic (Unchanged)
+  // 2. TIMER EFFECT (Standard logic)
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (connectionState === "connected" && sessionTime > 0) {
@@ -69,16 +74,20 @@ const LiveAITalk = () => {
     return () => clearInterval(timer);
   }, [connectionState, sessionTime]);
 
+  // 3. HANDLERS
   const handleSubjectSelect = (subject: string) => {
     const mentor = mentors.find((m) => m.subject === subject);
     if (mentor) {
-      // CHANGED: Instead of setting state, we navigate. 
-      // The useEffect above will catch this and handle the connection.
-      navigate(`/live-talk/${mentor.name.toLowerCase()}`);
+      setIsModalOpen(false);
+      // CRITICAL CHANGE: We do NOT set state here. 
+      // We just change the URL. The useEffect above will handle the rest.
+      navigate(`/live-talk/${encodeURIComponent(mentor.name.toLowerCase())}`);
     }
   };
 
   const handleReconnect = () => {
+    // For reconnect, we just reset the timers and state locally, 
+    // keeping the same URL.
     setSessionTime(600);
     setConnectionState("connecting");
     setStatusText(`You will be connected with ${selectedMentor.name}`);
@@ -89,7 +98,7 @@ const LiveAITalk = () => {
   };
 
   const handleReselectSubject = () => {
-    // CHANGED: Clear URL to reset state
+    // Clear the URL to go back to "idle"
     navigate("/live-talk");
     setIsModalOpen(true);
   };
@@ -280,4 +289,4 @@ const LiveAITalk = () => {
 };
 
 export default LiveAITalk;
-                          
+  
