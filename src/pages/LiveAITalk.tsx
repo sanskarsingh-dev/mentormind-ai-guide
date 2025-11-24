@@ -1,37 +1,49 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom"; // Import useParams
+import { useParams, useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { mentors } from "@/data/mentors"; // Assuming this is where your array lives
+import { mentors } from "@/data/mentors"; // Assuming this exports an array of mentor objects
+
 import { Phone, Video, Mic, MicOff, PhoneOff, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 
+// Fixed: Added Mentor interface (define based on your data/mentors.ts structure; adjust fields as needed)
+interface Mentor {
+  id: string;
+  name: string;
+  avatar: string;
+  subject: string;
+  greeting?: string; // Optional, if used elsewhere
+}
+
 const LiveAITalk = () => {
-  const { mentorId } = useParams<{ mentorId: string }>(); // Get ID from URL
+  const { mentorId } = useParams<{ mentorId: string }>();
   const navigate = useNavigate();
   
-  // If mentorId exists in URL, initialize state with that mentor
-  const [activeMentor, setActiveMentor] = useState(
-    mentorId ? mentors.find(m => m.id === mentorId) : null
+  // Fixed: Used proper Mentor type
+  const [activeMentor, setActiveMentor] = useState<Mentor | null>(
+    mentorId ? (mentors as Mentor[]).find(m => m.id === mentorId) || null : null
   );
   
   const [isCallActive, setIsCallActive] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
 
-  // EFFECT: Watch for URL changes. 
+  // EFFECT: Watch for URL changes.
   // If a user navigates here with an ID, auto-start the session setup.
   useEffect(() => {
     if (mentorId) {
-      const foundMentor = mentors.find(m => m.id === mentorId);
+      const foundMentor = (mentors as Mentor[]).find(m => m.id === mentorId);
       if (foundMentor) {
         setActiveMentor(foundMentor);
-        // Optional: Auto-start the call connection immediately
-        // setIsCallActive(true); 
+        // Optionally: setIsCallActive(true); 
+      } else {
+        toast.error("Mentor not found");
+        navigate("/subjects"); // Redirect if invalid ID
       }
     }
-  }, [mentorId]);
+  }, [mentorId, navigate]);
 
-  const handleStartCall = (mentor: any) => {
+  const handleStartCall = (mentor: Mentor) => {
     setActiveMentor(mentor);
     setIsCallActive(true);
   };
@@ -55,58 +67,67 @@ const LiveAITalk = () => {
       <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4 relative overflow-hidden">
         {/* Ambient Background */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/20 via-slate-950 to-slate-950" />
-        
-        <div className="z-10 flex flex-col items-center gap-8 w-full max-w-md animate-fade-in">
-          {/* Mentor Avatar pulsing effect */}
-          <div className="relative">
-            <div className={`absolute inset-0 rounded-full bg-primary/20 blur-xl transition-all duration-1000 ${isCallActive ? 'animate-pulse scale-150' : 'scale-100'}`} />
-            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-slate-800 relative z-10">
-              <img 
-                src={activeMentor.avatar} 
-                alt={activeMentor.name} 
-                className="w-full h-full object-cover"
-              />
-            </div>
+
+        {/* Mentor Avatar pulsing effect */}
+        {/* Fixed: Used backticks for template literal in className */}
+        <div className={`relative z-10 w-32 h-32 rounded-full overflow-hidden blur-xl transition-all duration-1000 ${isCallActive ? 'animate-pulse scale-150' : ''}`}>
+          <div className="w-full h-full relative">
+            <img
+              src={activeMentor.avatar}
+              alt={activeMentor.name}
+              className="w-full h-full object-cover"
+            />
             {isCallActive && (
-              <div className="absolute bottom-0 right-0 w-8 h-8 bg-green-500 rounded-full border-4 border-slate-950 flex items-center justify-center">
-                <div className="w-2 h-2 bg-white rounded-full animate-ping" />
-              </div>
+              <div className="absolute bottom-0 right-0 w-2 h-2 bg-green-500 rounded-full animate-ping" />
             )}
           </div>
+        </div>
 
-          <div className="text-center space-y-2">
-            <h2 className="text-2xl font-bold text-white">{activeMentor.name}</h2>
-            <p className="text-slate-400">{isCallActive ? "Connected • 00:12" : "Connecting..."}</p>
-          </div>
+        {/* Hidden on mobile, shown on md+ */}
+        <div className="w-32 h-32 rounded-full overflow-hidden hidden md:block">
+          <img
+            src={activeMentor.avatar}
+            alt={activeMentor.name}
+            className="w-full h-full object-cover"
+          />
+        </div>
 
-          {/* Call Controls */}
-          <div className="flex items-center gap-6 mt-8">
-            <Button
-              variant="outline"
-              size="icon"
-              className={`w-14 h-14 rounded-full border-none ${isMuted ? 'bg-white text-slate-900' : 'bg-slate-800 text-white hover:bg-slate-700'}`}
-              onClick={() => setIsMuted(!isMuted)}
-            >
-              {isMuted ? <MicOff className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
-            </Button>
+        {isCallActive && (
+          <div className="absolute bottom-0 right-0 w-2 h-2 bg-green-500 rounded-full animate-ping" />
+        )}
 
-            <Button
-              variant="destructive"
-              size="icon"
-              className="w-16 h-16 rounded-full shadow-lg shadow-red-500/20 hover:bg-red-600 scale-110"
-              onClick={handleEndCall}
-            >
-              <PhoneOff className="w-8 h-8" />
-            </Button>
+        <div className="text-center space-y-2">
+          <h2 className="text-2xl font-bold text-white">{activeMentor.name}</h2>
+          <p className="text-slate-400">Connected at 00:12</p>
+        </div>
 
-            <Button
-              variant="outline"
-              size="icon"
-              className="w-14 h-14 rounded-full border-none bg-slate-800 text-white hover:bg-slate-700"
-            >
-              <Video className="w-6 h-6" />
-            </Button>
-          </div>
+        {/* Call Controls */}
+        <div className="flex items-center gap-6 mt-8">
+          <Button
+            variant="outline"
+            size="icon"
+            className={`${isMuted ? 'bg-white text-slate-950 hover:bg-slate-200' : 'bg-slate-800 text-white hover:bg-slate-700'}`}
+            onClick={() => setIsMuted(!isMuted)}
+          >
+            {isMuted ? <MicOff className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
+          </Button>
+
+          <Button
+            variant="destructive"
+            size="icon"
+            className="bg-red-600 hover:bg-red-700"
+            onClick={handleEndCall}
+          >
+            <PhoneOff className="w-6 h-6" />
+          </Button>
+
+          <Button
+            variant="outline"
+            size="icon"
+            className="bg-slate-800 text-white hover:bg-slate-700"
+          >
+            <Video className="w-6 h-6" />
+          </Button>
         </div>
       </div>
     );
@@ -124,25 +145,30 @@ const LiveAITalk = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {mentors.map((mentor) => (
-            <Card 
+          {(mentors as Mentor[]).map((mentor) => (
+            <Card
               key={mentor.id}
-              className="p-6 hover:shadow-lg transition-all cursor-pointer group relative overflow-hidden"
+              className="p-6 hover:shadow-lg transition-all cursor-pointer border-slate-200"
               onClick={() => handleStartCall(mentor)}
             >
-              <div className="relative z-10 flex flex-col items-center text-center gap-4">
-                <div className="w-20 h-20 rounded-full overflow-hidden ring-4 ring-primary/10 group-hover:ring-primary/30 transition-all">
-                  <img src={mentor.avatar} alt={mentor.name} className="w-full h-full object-cover" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-lg">{mentor.name}</h3>
-                  <p className="text-sm text-muted-foreground">{mentor.subject}</p>
-                </div>
-                <Button className="w-full gap-2 group-hover:bg-primary group-hover:text-white">
-                  <Phone className="w-4 h-4" />
-                  Start Call
-                </Button>
+              {/* Fixed: Used backticks for template literal */}
+              <div className={`relative z-10 w-full h-48 rounded-lg overflow-hidden blur-xl transition-all duration-1000 ${isCallActive ? 'animate-pulse scale-150' : ''}`}>
+                <img
+                  src={mentor.avatar}
+                  alt={mentor.name}
+                  className="w-full h-full object-cover"
+                />
               </div>
+
+              <div>
+                <h3 className="font-semibold text-lg">{mentor.name}</h3>
+                <p className="text-sm text-muted-foreground">{mentor.subject}</p>
+              </div>
+
+              <Button className="w-full mt-4 gap-2">
+                <Phone className="w-4 h-4" />
+                Start Call
+              </Button>
             </Card>
           ))}
         </div>
