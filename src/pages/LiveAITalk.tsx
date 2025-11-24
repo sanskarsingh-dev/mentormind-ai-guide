@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { ArrowLeft, Mic, X, Grid3x3 } from "lucide-react";
 import { SubjectSelectionModal } from "@/components/SubjectSelectionModal";
-import { mentors } from "@/data/mentors";
+import { mentors } from "@/data/mentors.ts";
 
 type ConnectionState = "idle" | "selecting" | "connecting" | "connected" | "ended";
 
