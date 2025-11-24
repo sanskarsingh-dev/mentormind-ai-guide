@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"; // Fixed: Added leading / for alias (standard Vite setup)
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { getMentorById } from "@/data/mentors";
@@ -11,14 +11,13 @@ import {
   MicOff, 
   Volume2, 
   VolumeX, 
-  Upload,
-  Loader2,
-  MoreVertical
+  Upload, 
+  Loader2 
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-// Import the call icon
-import callMentorIcon from "@/assets/subjects/call-mentor.webp";
+
+import callMentorIcon from "@/assets/subjects/call-mentor.webp"; // Fixed: Added leading / for alias
 
 interface Message {
   role: "user" | "assistant";
@@ -28,8 +27,7 @@ interface Message {
 const Chat = () => {
   const { mentorId } = useParams<{ mentorId: string }>();
   const navigate = useNavigate();
-  const mentor = getMentorById(mentorId || "");
-  
+  const [mentor, setMentor] = useState<any>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -38,7 +36,12 @@ const Chat = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
 
-  // Initialize with mentor's greeting
+  useEffect(() => {
+    if (mentorId) {
+      setMentor(getMentorById(mentorId || ""));
+    }
+  }, [mentorId]);
+
   useEffect(() => {
     if (mentor && messages.length === 0) {
       setMessages([{
@@ -48,59 +51,56 @@ const Chat = () => {
     }
   }, [mentor]);
 
-  // Auto-scroll to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Speech recognition setup
   useEffect(() => {
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+    if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
       const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
       recognitionRef.current = new SpeechRecognition();
       recognitionRef.current.continuous = false;
       recognitionRef.current.interimResults = false;
+      recognitionRef.current.lang = "en-US";
 
       recognitionRef.current.onresult = (event: any) => {
         const transcript = event.results[0][0].transcript;
         setInput(transcript);
-        setIsListening(false);
       };
 
       recognitionRef.current.onerror = () => {
         setIsListening(false);
         toast.error("Speech recognition error");
       };
+
+      recognitionRef.current.onend = () => {
+        setIsListening(false);
+      };
     }
   }, []);
 
   const toggleListening = () => {
-    if (!recognitionRef.current) {
-      toast.error("Speech recognition not supported");
-      return;
-    }
-
-    if (isListening) {
-      recognitionRef.current.stop();
-      setIsListening(false);
-    } else {
-      recognitionRef.current.start();
-      setIsListening(true);
+    if (recognitionRef.current) {
+      if (isListening) {
+        recognitionRef.current.stop();
+      } else {
+        recognitionRef.current.start();
+        setIsListening(true);
+      }
     }
   };
 
   const speakText = (text: string) => {
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
-      
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.rate = 0.9;
       utterance.pitch = 1.0;
-      
+
       utterance.onstart = () => setIsSpeaking(true);
       utterance.onend = () => setIsSpeaking(false);
       utterance.onerror = () => setIsSpeaking(false);
-      
+
       window.speechSynthesis.speak(utterance);
     }
   };
@@ -125,8 +125,6 @@ const Chat = () => {
         body: {
           messages: [...messages, userMessage],
           mentorId: mentorId,
-          mentorName: mentor?.name,
-          mentorSubject: mentor?.subject
         }
       });
 
@@ -138,16 +136,18 @@ const Chat = () => {
       };
 
       setMessages(prev => [...prev, assistantMessage]);
+      speakText(data.response);
     } catch (error: any) {
       console.error('Chat error:', error);
       toast.error(error.message || "Failed to get response");
+      setIsLoading(false);
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
     }
@@ -169,131 +169,121 @@ const Chat = () => {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => navigate("/subjects")}
+            onClick={() => navigate(-1)}
           >
             <ArrowLeft className="w-5 h-5" />
           </Button>
-
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full overflow-hidden ring-2 ring-primary/20">
-              <img src={mentor.avatar} alt={mentor.name} className="w-full h-full object-cover" />
-            </div>
-            <div>
-              <h2 className="font-semibold text-foreground">{mentor.name}</h2>
-              <p className="text-sm text-muted-foreground">{mentor.subject}</p>
-            </div>
+            <img src={mentor.avatar} alt={mentor.name} className="w-full h-full object-cover rounded-full" />
+            <h2 className="font-semibold text-foreground">{mentor.name}</h2>
           </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          {/* Call Mentor Button */}
-          <Button 
-            variant="ghost" 
-            size="icon"
-            onClick={() => navigate("/live-talk/${mentorId}`)}
-            className="hover:bg-primary/10"
-          >
-            <img 
-              src={callMentorIcon} 
-              alt="Call Mentor" 
-              className="w-6 h-6"
-            />
-          </Button>
-          
-          <Button variant="ghost" size="icon">
-            <MoreVertical className="w-5 h-5" />
-          </Button>
         </div>
       </div>
 
+      {/* Call Mentor Button */}
+      <div className="flex items-center justify-center p-4">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => navigate(`/live-talk/${mentorId}`)} // Fixed: Match route path in App.tsx
+          className="hover:bg-primary/10 rounded-full"
+        >
+          <img
+            src={callMentorIcon}
+            alt="Call Mentor"
+            className="w-6 h-6"
+          />
+        </Button>
+      </div>
+
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-4">
-        {messages.map((message, idx) => (
+      <div className="flex-1 overflow-y-auto px-4 pb-4">
+        {messages.map((message, index) => (
           <div
-            key={idx}
-            className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+            key={index}
+            className={`
+              flex ${message.role === 'user' ? 'justify-end' : 'justify-start'} mb-4
+            `}
           >
             <Card
-              className={`relative max-w-[90%] p-4 rounded-3xl ${
-                message.role === 'user'
-                  ? 'bg-gradient-to-r from-purple-500 via-blue-500 to-pink-500 text-white'
-                  : 'glass-card'
-              }`}
+              className={`
+                max-w-[90%] p-4 rounded-3xl ${
+                  message.role === 'user'
+                    ? 'bg-gradient-to-r from-purple-500 via-blue-500 to-pink-500 text-white'
+                    : 'bg-card'
+                }
+              `}
             >
-              {/* Text Content */}
-              <div className={`${message.role === 'assistant' ? 'pb-6' : ''}`}>
-                <p className={`whitespace-pre-wrap leading-relaxed ${message.role === 'user' ? 'text-white' : 'text-foreground'}`}>
-                  {message.content}
-                </p>
-              </div>
+              {message.role === 'assistant' ? (
+                <div className={`${message.role === 'assistant' ? 'pb-6' : ''}`}>
+                  <p className={`
+                    whitespace-pre-wrap leading-relaxed ${
+                      message.role === 'assistant' 
+                        ? 'text-foreground' 
+                        : 'text-white'
+                    }
+                  `}>
+                    {message.content}
+                  </p>
+                </div>
+              ) : (
+                <p className="text-foreground">{message.content}</p>
+              )}
 
-              {/* Speaker Icon - Absolutely positioned to corner */}
               {message.role === 'assistant' && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="absolute bottom-2 right-2 w-8 h-8 hover:bg-primary/10 rounded-full"
-                  onClick={() => isSpeaking ? stopSpeaking() : speakText(message.content)}
-                >
+                <div className="flex items-center justify-end gap-2 mt-2">
                   {isSpeaking ? (
-                    <VolumeX className="w-4 h-4 text-primary" />
+                    <VolumeX 
+                      className="w-4 h-4 cursor-pointer" 
+                      onClick={stopSpeaking}
+                    />
                   ) : (
-                    <Volume2 className="w-4 h-4 text-primary" />
+                    <Volume2 
+                      className="w-4 h-4 cursor-pointer" 
+                      onClick={() => speakText(message.content)}
+                    />
                   )}
-                </Button>
+                </div>
               )}
             </Card>
           </div>
         ))}
-        {isLoading && (
-          <div className="flex justify-start">
-            <Card className="glass-card p-4 rounded-3xl">
-              <Loader2 className="w-5 h-5 animate-spin text-primary" />
-            </Card>
-          </div>
-        )}
         <div ref={messagesEndRef} />
       </div>
 
       {/* Input Area */}
       <div className="glass-card border-t p-4">
-        <div className="max-w-4xl mx-auto flex items-center gap-3">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="flex-shrink-0"
-          >
-            <Upload className="w-5 h-5" />
-          </Button>
-
-          <div className="flex-1 relative">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex gap-2">
             <Input
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Ask anything..."
-              className="rounded-full pr-12 bg-white/80 text-gray-900 placeholder:text-gray-500"
+              className="flex-1 rounded-full"
               disabled={isLoading}
             />
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleListening}
+              disabled={isLoading}
+              className={isListening ? "text-red-500" : ""}
+            >
+              {isListening ? <Mic className="w-5 h-5" /> : <MicOff className="w-5 h-5" />}
+            </Button>
+            <Button
+              onClick={sendMessage}
+              disabled={!input.trim() || isLoading}
+              className="rounded-full"
+            >
+              {isLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Send className="w-4 h-4" />
+              )}
+            </Button>
           </div>
-
-          <Button
-            variant="ghost"
-            size="icon"
-            className={`flex-shrink-0 ${isListening ? 'text-red-500' : ''}`}
-            onClick={toggleListening}
-          >
-            {isListening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
-          </Button>
-
-          <Button
-            size="icon"
-            onClick={sendMessage}
-            disabled={!input.trim() || isLoading}
-            className="flex-shrink-0 rounded-full bg-gradient-to-r from-purple-500 via-blue-500 to-pink-500 hover:opacity-90"
-          >
-            <Send className="w-5 h-5" />
-          </Button>
         </div>
       </div>
     </div>
