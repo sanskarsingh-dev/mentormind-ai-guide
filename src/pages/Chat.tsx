@@ -38,6 +38,10 @@ const Chat = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
 
+  // Helper: Convert name to URL-friendly slug (e.g., "Miss Lisa" -> "miss-lisa")
+  const slugify = (name: string) => 
+    name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
   // Initialize with mentor's greeting
   useEffect(() => {
     if (mentor && messages.length === 0) {
@@ -153,6 +157,14 @@ const Chat = () => {
     }
   };
 
+  // Updated Navigation Handler
+  const handleCallNavigation = () => {
+    if (mentor) {
+      const mentorSlug = slugify(mentor.name);
+      navigate(`/live-talk/${mentorSlug}`);
+    }
+  };
+
   if (!mentor) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -186,11 +198,11 @@ const Chat = () => {
         </div>
 
         <div className="flex items-center gap-2">
-          {/* Call Mentor Button */}
+          {/* Call Mentor Button - Updated with handleCallNavigation */}
           <Button 
             variant="ghost" 
             size="icon"
-            onClick={() => navigate(`/live-talk/${mentorId}`)}
+            onClick={handleCallNavigation}
             className="hover:bg-primary/10"
           >
             <img 
