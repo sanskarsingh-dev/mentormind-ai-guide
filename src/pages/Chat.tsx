@@ -59,21 +59,9 @@ const Chat = () => {
   }, [messages]);
 
  // Re-render LaTeX when messages change
-// Re-render LaTeX when messages change
-// Re-render LaTeX when messages change
-// Re-render LaTeX when messages change
 useEffect(() => {
-  if (messagesContainerRef.current && window.MathJax && window.MathJax.typesetPromise) {
-    // FIXED: Clear previous state + delay for DOM settle, then full container re-scan
-    setTimeout(() => {
-      if (window.MathJax.typesetClear) {
-        window.MathJax.typesetClear([messagesContainerRef.current]);
-      }
-      window.MathJax.typesetPromise([messagesContainerRef.current]).then(() => {
-        // Re-scroll after render
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-      }).catch(err => console.warn('MathJax error:', err));
-    }, 150);  // Slightly longer delay for clear to settle
+  if (messagesContainerRef.current && window.MathJax) {
+    window.MathJax.typesetPromise([messagesContainerRef.current]).catch(err => console.warn('MathJax error:', err));
   }
 }, [messages]);
   
