@@ -20,9 +20,13 @@ import QuizGenerator from "./pages/QuizGenerator";
 import LiveAITalk from "./pages/LiveAITalk";
 import NotFound from "./pages/NotFound";
 
+<BrowserRouter basename={process.env.NODE_ENV === 'production' ? '/mentormind-ai-guide' : '/'}>
+
 const queryClient = new QueryClient();
 
-// Wrapper component to handle Auth State changes
+
+
+  // Wrapper component to handle Auth State changes
 const AppContent = () => {
   const navigate = useNavigate();
 useEffect(() => {
@@ -34,6 +38,7 @@ useEffect(() => {
     document.head.appendChild(script);
   }
 }, []);
+
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "SIGNED_IN") {
@@ -78,5 +83,5 @@ const App = () => (
     </TooltipProvider>
   </QueryClientProvider>
 );
-
+</BrowserRouter>
 export default App;
