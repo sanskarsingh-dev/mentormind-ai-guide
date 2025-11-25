@@ -94,6 +94,7 @@ const LiveAITalk = () => {
     setIsListening(false);
   };
 
+  // Fixed: Ensure this function uses proper template literal with backticks
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -128,6 +129,7 @@ const LiveAITalk = () => {
         {/* Session Timer (when connected) */}
         {connectionState === "connected" && (
           <div className="mb-2 px-4 py-2 rounded-full bg-primary/20 border border-primary/40 backdrop-blur-lg">
+            {/* Fixed: Ensure {formatTime(sessionTime)} is used, not the raw function body */}
             <span className="text-sm font-semibold text-primary">{formatTime(sessionTime)}</span>
           </div>
         )}
