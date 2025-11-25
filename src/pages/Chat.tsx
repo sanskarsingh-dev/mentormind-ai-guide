@@ -36,7 +36,6 @@ const Chat = () => {
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
 
   // Helper: Convert name to URL-friendly slug (e.g., "Miss Lisa" -> "miss-lisa")
@@ -58,13 +57,6 @@ const Chat = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
- // Re-render LaTeX when messages change
-useEffect(() => {
-  if (messagesContainerRef.current && window.MathJax) {
-    window.MathJax.typesetPromise([messagesContainerRef.current]).catch(err => console.warn('MathJax error:', err));
-  }
-}, [messages]);
-  
   // Speech recognition setup
   useEffect(() => {
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
@@ -227,7 +219,7 @@ useEffect(() => {
       </div>
 
       {/* Messages */}
-      <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-6 space-y-4">
+      <div className="flex-1 overflow-y-auto p-6 space-y-4">
         {messages.map((message, idx) => (
           <div
             key={idx}
