@@ -53,7 +53,7 @@ const AppContent = () => {
       <Route path="/profile" element={<Profile />} />
       <Route path="/notifications" element={<Notifications />} />
       <Route path="/quiz" element={<QuizGenerator />} />
-      <Route path="/live-talk/:mentorId?" element={<LiveAITalk />} />
+      <Route path="/live-talk/:mentorSlug?" element={<LiveAITalk />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
