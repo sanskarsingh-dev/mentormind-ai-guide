@@ -20,6 +20,8 @@ import { supabase } from "@/integrations/supabase/client";
 // Import the call icon
 import callMentorIcon from "@/assets/subjects/call-mentor.svg";
 
+import { MathBlock } from "@/components/MathBlock";
+
 interface Message {
   role: "user" | "assistant";
   content: string;
