@@ -236,19 +236,9 @@ const Chat = () => {
             >
               {/* Text Content */}
               <div className={`${message.role === 'assistant' ? 'pb-6' : ''}`}>
-                {message.role === "assistant" ? (
-  <div className="text-left space-y-3">
-    {message.content.split("\n").map((line, i) => {
-      const trimmed = line.trim();
-      if (
-        trimmed.startsWith(" \]") ||
-        trimmed.startsWith("\\(") ||
-        trimmed.startsWith("$")
-      ) {
-        return <MathBlock key={i}>{trimmed}</MathBlock>;
-      }
-      return <p key={i} className="mb-2">{line || " "}</p>;
-    })}
+              {message.role === "assistant" ? (
+  <div className="math-content whitespace-pre-wrap leading-relaxed text-foreground" data-mathjax="true">
+    {message.content}
   </div>
 ) : (
   <p className="whitespace-pre-wrap leading-relaxed text-foreground">
