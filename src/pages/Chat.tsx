@@ -20,8 +20,6 @@ import { supabase } from "@/integrations/supabase/client";
 // Import the call icon
 import callMentorIcon from "@/assets/subjects/call-mentor.svg";
 
-import { MathBlock } from "@/components/MathBlock";
-
 interface Message {
   role: "user" | "assistant";
   content: string;
@@ -236,15 +234,9 @@ const Chat = () => {
             >
               {/* Text Content */}
               <div className={`${message.role === 'assistant' ? 'pb-6' : ''}`}>
-              {message.role === "assistant" ? (
-  <div className="math-content whitespace-pre-wrap leading-relaxed text-foreground" data-mathjax="true">
-    {message.content}
-  </div>
-) : (
-  <p className="whitespace-pre-wrap leading-relaxed text-foreground">
-    {message.content}
-  </p>
-)}
+                <p className={`whitespace-pre-wrap leading-relaxed ${message.role === 'user' ? 'text-white' : 'text-foreground'}`}>
+                  {message.content}
+                </p>
               </div>
 
               {/* Speaker Icon - Absolutely positioned to corner */}
