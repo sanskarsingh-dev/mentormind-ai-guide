@@ -29,38 +29,18 @@ const AppContent = () => {
 // Load MathJax for LaTeX rendering
 // Load MathJax for LaTeX rendering
 // Load MathJax for LaTeX rendering
+// Load MathJax for LaTeX rendering
 useEffect(() => {
   if (typeof window !== 'undefined' && !document.querySelector('#mathjax-script')) {
-    // Config: Handles \( / \) , \[ / \] , \( \), and auto-detects math environments
-    window.MathJax = {
-      tex: {
-        inlineMath: [['\( ', ' \)'], ['\\(', '\\)']],
-        displayMath: [['\[ ', ' \]'], ['\\[', '\\]']],
-        processEscapes: true,
-        processEnvironments: true,
-        tags: 'all'  // NEW: Scans all tags for math (helps with <p>)
-      },
-      options: {
-        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
-        ignoreHtmlClass: 'tex2jax_ignore',
-        processHtmlClass: 'tex2jax_process'
-      },
-      startup: {
-        typeset: false  // Defer until we call it
-      }
-    };
-
     const script = document.createElement('script');
     script.id = 'mathjax-script';
     script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
     script.async = true;
     script.onload = () => {
+      // Config MathJax for dynamic content
       if (window.MathJax) {
         window.MathJax.startup.promise.then(() => {
-          // NEW: Initial typeset on whole page after load
-          window.MathJax.typesetPromise().then(() => {
-            console.log('MathJax fully loaded & initial render complete');
-          }).catch(err => console.warn('Initial MathJax error:', err));
+          console.log('MathJax loaded');
         });
       }
     };
