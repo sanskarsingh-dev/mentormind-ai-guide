@@ -236,9 +236,25 @@ const Chat = () => {
             >
               {/* Text Content */}
               <div className={`${message.role === 'assistant' ? 'pb-6' : ''}`}>
-                <p className={`whitespace-pre-wrap leading-relaxed ${message.role === 'user' ? 'text-white' : 'text-foreground'}`}>
-                  {message.content}
-                </p>
+                {message.role === "assistant" ? (
+  <div className="text-left space-y-3">
+    {message.content.split("\n").map((line, i) => {
+      const trimmed = line.trim();
+      if (
+        trimmed.startsWith(" \]") ||
+        trimmed.startsWith("\\(") ||
+        trimmed.startsWith("$")
+      ) {
+        return <MathBlock key={i}>{trimmed}</MathBlock>;
+      }
+      return <p key={i} className="mb-2">{line || " "}</p>;
+    })}
+  </div>
+) : (
+  <p className="whitespace-pre-wrap leading-relaxed text-foreground">
+    {message.content}
+  </p>
+)}
               </div>
 
               {/* Speaker Icon - Absolutely positioned to corner */}
