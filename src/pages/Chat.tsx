@@ -60,11 +60,17 @@ const Chat = () => {
 
  // Re-render LaTeX when messages change
 // Re-render LaTeX when messages change
+// Re-render LaTeX when messages change
 useEffect(() => {
   if (messagesContainerRef.current && window.MathJax && window.MathJax.typesetPromise) {
-    // NEW: Target only <p> tags inside container for precise math rendering
-    const mathElements = messagesContainerRef.current.querySelectorAll('p');
-    window.MathJax.typesetPromise(Array.from(mathElements)).catch(err => console.warn('MathJax error:', err));
+    // NEW: Short delay + target <p> for precise, flicker-free rendering
+    setTimeout(() => {
+      const mathElements = messagesContainerRef.current.querySelectorAll('p');
+      window.MathJax.typesetPromise(Array.from(mathElements)).then(() => {
+        // Optional: Scroll after render if needed
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      }).catch(err => console.warn('MathJax re-render error:', err));
+    }, 100);  // 100ms delay for DOM settle
   }
 }, [messages]);
   
