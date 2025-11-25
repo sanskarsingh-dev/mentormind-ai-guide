@@ -57,6 +57,16 @@ const Chat = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+// Re-render LaTeX when messages change
+useEffect(() => {
+  if (messagesContainerRef.current && window.MathJax && window.MathJax.typesetPromise) {
+    // NEW: Target only <p> tags inside container for precise math rendering
+    const mathElements = messagesContainerRef.current.querySelectorAll('p');
+    window.MathJax.typesetPromise(Array.from(mathElements)).catch(err => console.warn('MathJax error:', err));
+  }
+}, [messages]);
+  
+  
   // Speech recognition setup
   useEffect(() => {
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
