@@ -18,7 +18,7 @@ import {
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 // Import the call icon
-import callMentorIcon from "@/assets/subjects/call-mentor.webp";
+import callMentorIcon from "@/assets/subjects/call-mentor.svg";
 
 interface Message {
   role: "user" | "assistant";
