@@ -27,17 +27,35 @@ const AppContent = () => {
   const navigate = useNavigate();
 
 // Load MathJax for LaTeX rendering
+// Load MathJax for LaTeX rendering
 useEffect(() => {
   if (typeof window !== 'undefined' && !document.querySelector('#mathjax-script')) {
+    // NEW: Set config BEFORE loading script (fixes delimiter visibility)
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\( ', ' \)'], ['\\(', '\\)']],
+        displayMath: [[' \]', '\[ '], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      },
+      startup: {
+        typeset: false  // Defer typesetting until we call it in Chat
+      }
+    };
+
     const script = document.createElement('script');
     script.id = 'mathjax-script';
     script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
     script.async = true;
     script.onload = () => {
-      // Config MathJax for dynamic content
       if (window.MathJax) {
         window.MathJax.startup.promise.then(() => {
-          console.log('MathJax loaded');
+          console.log('MathJax loaded with delimiters enabled');
         });
       }
     };
