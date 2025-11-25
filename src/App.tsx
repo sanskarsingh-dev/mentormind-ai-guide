@@ -28,15 +28,17 @@ const AppContent = () => {
 
 // Load MathJax for LaTeX rendering
 // Load MathJax for LaTeX rendering
+// Load MathJax for LaTeX rendering
 useEffect(() => {
   if (typeof window !== 'undefined' && !document.querySelector('#mathjax-script')) {
-    // NEW: Set config BEFORE loading script (fixes delimiter visibility)
+    // Config: Handles \( / \) , \[ / \] , \( \), and auto-detects math environments
     window.MathJax = {
       tex: {
         inlineMath: [['\( ', ' \)'], ['\\(', '\\)']],
-        displayMath: [[' \]', '\[ '], ['\\[', '\\]']],
+        displayMath: [['\[ ', ' \]'], ['\\[', '\\]']],
         processEscapes: true,
-        processEnvironments: true
+        processEnvironments: true,
+        tags: 'all'  // NEW: Scans all tags for math (helps with <p>)
       },
       options: {
         skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
@@ -44,7 +46,7 @@ useEffect(() => {
         processHtmlClass: 'tex2jax_process'
       },
       startup: {
-        typeset: false  // Defer typesetting until we call it in Chat
+        typeset: false  // Defer until we call it
       }
     };
 
@@ -55,7 +57,10 @@ useEffect(() => {
     script.onload = () => {
       if (window.MathJax) {
         window.MathJax.startup.promise.then(() => {
-          console.log('MathJax loaded with delimiters enabled');
+          // NEW: Initial typeset on whole page after load
+          window.MathJax.typesetPromise().then(() => {
+            console.log('MathJax fully loaded & initial render complete');
+          }).catch(err => console.warn('Initial MathJax error:', err));
         });
       }
     };
