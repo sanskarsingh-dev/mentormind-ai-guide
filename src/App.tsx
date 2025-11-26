@@ -32,31 +32,15 @@ const AppContent = () => {
 // Load MathJax for LaTeX rendering
 useEffect(() => {
   if (typeof window !== 'undefined' && !document.querySelector('#mathjax-script')) {
-    // NEW: Config before loading (handles inline/block delimiters)
-    window.MathJax = {
-      tex: {
-        inlineMath: [['\( ', ' \)'], ['\\(', '\\)']],  // For \( x^2 \) or \( x^2 \)
-        displayMath: [['\[ ', ' \]'], ['\\[', '\\]']],  // For \[ E=mc^2 \] or \[ E=mc^2 \]
-        processEscapes: true,
-        processEnvironments: true
-      },
-      options: {
-        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
-        ignoreHtmlClass: 'tex2jax_ignore'
-      },
-      startup: {
-        typeset: false  // Defer to manual calls in Chat.tsx
-      }
-    };
-
     const script = document.createElement('script');
     script.id = 'mathjax-script';
     script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
     script.async = true;
     script.onload = () => {
+      // Config MathJax for dynamic content
       if (window.MathJax) {
         window.MathJax.startup.promise.then(() => {
-          console.log('MathJax loaded with full delimiters');
+          console.log('MathJax loaded');
         });
       }
     };
