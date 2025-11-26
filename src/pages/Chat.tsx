@@ -260,7 +260,7 @@ useEffect(() => {
     >
       {message.content}
     </ReactMarkdown>
-  </div> ref={messagesContainerRef
+  </div> 
 ) : (
   <p className="whitespace-pre-wrap leading-relaxed text-white">
     {message.content}
