@@ -20,12 +20,6 @@ import { supabase } from "@/integrations/supabase/client";
 // Import the call icon
 import callMentorIcon from "@/assets/subjects/call-mentor.svg";
 
-// NEW: Add markdown and math rendering imports (CDN - no install needed)
-import ReactMarkdown from "https://esm.sh/react-markdown@9?bundle";
-import remarkMath from "https://esm.sh/remark-math@6?bundle";
-import rehypeKatex from "https://esm.sh/rehype-katex@6?bundle";
-import "https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css";
-
 interface Message {
   role: "user" | "assistant";
   content: string;
@@ -251,31 +245,9 @@ useEffect(() => {
             >
               {/* Text Content */}
               <div className={`${message.role === 'assistant' ? 'pb-6' : ''}`}>
-                {/* NEW: Add ReactMarkdown for assistant messages only (renders markdown + LaTeX) */}
-                {message.role === 'assistant' ? (
-                  <ReactMarkdown
-                    remarkPlugins={[remarkMath]}
-                    rehypePlugins={[rehypeKatex]}
-                    className="prose prose-invert max-w-none text-foreground leading-relaxed"
-                    components={{
-                      p: ({ children }) => <p className="mb-2 whitespace-pre-wrap">{children}</p>,
-                      strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
-                      em: ({ children }) => <em className="italic">{children}</em>,
-                      h3: ({ children }) => <h3 className="text-base font-semibold mb-2">{children}</h3>,
-                      code: ({ children }) => <code className="bg-muted px-1 rounded font-mono text-sm">{children}</code>,
-                      hr: () => <hr className="my-4 border-muted" />,
-                      ul: ({ children }) => <ul className="list-disc ml-4 mb-2">{children}</ul>,
-                      ol: ({ children }) => <ol className="list-decimal ml-4 mb-2">{children}</ol>,
-                      li: ({ children }) => <li className="mb-1">{children}</li>,
-                    }}
-                  >
-                    {message.content}
-                  </ReactMarkdown>
-                ) : (
-                  <p className={`whitespace-pre-wrap leading-relaxed ${message.role === 'user' ? 'text-white' : 'text-foreground'}`}>
-                    {message.content}
-                  </p>
-                )}
+                <p className={`whitespace-pre-wrap leading-relaxed ${message.role === 'user' ? 'text-white' : 'text-foreground'}`}>
+                  {message.content}
+                </p>
               </div>
 
               {/* Speaker Icon - Absolutely positioned to corner */}
