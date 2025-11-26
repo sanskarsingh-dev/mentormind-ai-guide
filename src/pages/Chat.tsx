@@ -244,11 +244,28 @@ useEffect(() => {
               }`}
             >
               {/* Text Content */}
-              <div className={`${message.role === 'assistant' ? 'pb-6' : ''}`}>
-                <p className={`whitespace-pre-wrap leading-relaxed ${message.role === 'user' ? 'text-white' : 'text-foreground'}`}>
-                  {message.content}
-                </p>
-              </div>
+              {message.role === 'assistant' ? (
+  <div className="pb-6">
+    <ReactMarkdown
+      remarkPlugins={[remarkMath]}
+      rehypePlugins={[rehypeKatex]}
+      className="whitespace-pre-wrap leading-relaxed text-foreground prose prose-invert max-w-none"
+      components={{
+        p: ({ children }) => <p className="mb-2">{children}</p>,
+        strong: ({ children }) => <strong className="font-bold">{children}</strong>,
+        em: ({ children }) => <em className="italic">{children}</em>,
+        code: ({ children }) => <code className="bg-muted px-1 rounded">{children}</code>,
+        // Add more if needed (e.g., ul, ol for lists)
+      }}
+    >
+      {message.content}
+    </ReactMarkdown>
+  </div> ref={messagesContainerRef
+) : (
+  <p className="whitespace-pre-wrap leading-relaxed text-white">
+    {message.content}
+  </p> 
+)}
 
               {/* Speaker Icon - Absolutely positioned to corner */}
               {message.role === 'assistant' && (
