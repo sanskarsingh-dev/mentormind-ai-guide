@@ -26,32 +26,36 @@ const queryClient = new QueryClient();
 const AppContent = () => {
   const navigate = useNavigate();
 
-// Load MathJax for LaTeX rendering
-// Load MathJax for LaTeX rendering
-// Load MathJax for LaTeX rendering
-// Load MathJax for LaTeX rendering
-useEffect(() => {
-  if (typeof window !== 'undefined' && !document.querySelector('#mathjax-script')) {
-    const script = document.createElement('script');
-    script.id = 'mathjax-script';
-    script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
-    script.async = true;
-    script.onload = () => {
-      // Config MathJax for dynamic content
-      if (window.MathJax) {
-        window.MathJax.startup.promise.then(() => {
-          console.log('MathJax loaded');
-        });
+  // Load MathJax with Configuration
+  useEffect(() => {
+    // 1. Configure MathJax BEFORE loading the script
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        packages: {'[+]': ['noerrors', 'noundefined']}
+      },
+      startup: {
+        typeset: false // We will typeset manually in Chat.tsx
       }
     };
-    document.head.appendChild(script);
-  }
-}, []);
+
+    // 2. Load the script if not present
+    if (typeof window !== 'undefined' && !document.querySelector('#mathjax-script')) {
+      const script = document.createElement('script');
+      script.id = 'mathjax-script';
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.async = true;
+      script.onload = () => {
+        console.log('MathJax loaded');
+      };
+      document.head.appendChild(script);
+    }
+  }, []);
   
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "SIGNED_IN") {
-        // Redirect to dashboard if user is on the landing page
         if (window.location.pathname === "/") {
           navigate("/dashboard");
         }
