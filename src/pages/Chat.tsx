@@ -17,7 +17,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-// Import the call icon
+// Import ReactMarkdown to handle **bold** and ### headers
+import ReactMarkdown from "react-markdown";
 import callMentorIcon from "@/assets/subjects/call-mentor.svg";
 
 interface Message {
@@ -39,11 +40,9 @@ const Chat = () => {
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
 
-  // Helper: Convert name to URL-friendly slug (e.g., "Miss Lisa" -> "miss-lisa")
   const slugify = (name: string) => 
     name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
-  // Initialize with mentor's greeting
   useEffect(() => {
     if (mentor && messages.length === 0) {
       setMessages([{
@@ -53,22 +52,22 @@ const Chat = () => {
     }
   }, [mentor]);
 
-  // Auto-scroll to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
- // Re-render LaTeX when messages change
-// Re-render LaTeX when messages change
-// Re-render LaTeX when messages change
-// Re-render LaTeX when messages change
-useEffect(() => {
-  if (messagesContainerRef.current && window.MathJax) {
-    window.MathJax.typesetPromise([messagesContainerRef.current]).catch(err => console.warn('MathJax error:', err));
-  }
-}, [messages]);
+  // MathJax Re-rendering Logic
+  useEffect(() => {
+    // Only run if MathJax is loaded and the container exists
+    if (messagesContainerRef.current && window.MathJax && window.MathJax.typesetPromise) {
+      // Small timeout ensures ReactMarkdown has finished rendering the DOM nodes
+      setTimeout(() => {
+        window.MathJax.typesetPromise([messagesContainerRef.current])
+          .catch((err: any) => console.warn('MathJax error:', err));
+      }, 10);
+    }
+  }, [messages]);
   
-  // Speech recognition setup
   useEffect(() => {
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
       const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
@@ -107,15 +106,12 @@ useEffect(() => {
   const speakText = (text: string) => {
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
-      
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.rate = 0.9;
       utterance.pitch = 1.0;
-      
       utterance.onstart = () => setIsSpeaking(true);
       utterance.onend = () => setIsSpeaking(false);
       utterance.onerror = () => setIsSpeaking(false);
-      
       window.speechSynthesis.speak(utterance);
     }
   };
@@ -146,12 +142,10 @@ useEffect(() => {
       });
 
       if (error) throw error;
-
       const assistantMessage: Message = {
         role: "assistant",
         content: data.response
       };
-
       setMessages(prev => [...prev, assistantMessage]);
     } catch (error: any) {
       console.error('Chat error:', error);
@@ -168,7 +162,6 @@ useEffect(() => {
     }
   };
 
-  // Updated Navigation Handler
   const handleCallNavigation = () => {
     if (mentor) {
       const mentorSlug = slugify(mentor.name);
@@ -209,7 +202,6 @@ useEffect(() => {
         </div>
 
         <div className="flex items-center gap-2">
-          {/* Call Mentor Button - Updated with handleCallNavigation */}
           <Button 
             variant="ghost" 
             size="icon"
@@ -222,7 +214,6 @@ useEffect(() => {
               className="w-6 h-6"
             />
           </Button>
-          
           <Button variant="ghost" size="icon">
             <MoreVertical className="w-5 h-5" />
           </Button>
@@ -243,14 +234,27 @@ useEffect(() => {
                   : 'glass-card'
               }`}
             >
-              {/* Text Content */}
+              {/* CONTENT AREA - REPLACED WITH MARKDOWN PARSER */}
               <div className={`${message.role === 'assistant' ? 'pb-6' : ''}`}>
-                <p className={`whitespace-pre-wrap leading-relaxed ${message.role === 'user' ? 'text-white' : 'text-foreground'}`}>
+                <ReactMarkdown
+                  components={{
+                    // Style specific elements
+                    p: ({node, ...props}) => <p className={`mb-2 leading-relaxed whitespace-pre-wrap ${message.role === 'user' ? 'text-white' : 'text-foreground'}`} {...props} />,
+                    strong: ({node, ...props}) => <span className="font-bold" {...props} />,
+                    em: ({node, ...props}) => <span className="italic" {...props} />,
+                    h1: ({node, ...props}) => <h1 className="text-xl font-bold mt-4 mb-2" {...props} />,
+                    h2: ({node, ...props}) => <h2 className="text-lg font-bold mt-3 mb-2" {...props} />,
+                    h3: ({node, ...props}) => <h3 className="text-md font-bold mt-2 mb-1" {...props} />,
+                    ul: ({node, ...props}) => <ul className="list-disc ml-6 mb-2" {...props} />,
+                    ol: ({node, ...props}) => <ol className="list-decimal ml-6 mb-2" {...props} />,
+                    li: ({node, ...props}) => <li className="mb-1" {...props} />,
+                  }}
+                >
                   {message.content}
-                </p>
+                </ReactMarkdown>
               </div>
 
-              {/* Speaker Icon - Absolutely positioned to corner */}
+              {/* Speaker Icon */}
               {message.role === 'assistant' && (
                 <Button
                   variant="ghost"
