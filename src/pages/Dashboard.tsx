@@ -126,66 +126,75 @@ const Dashboard = () => {
         </Card>
 
         {/* Study & Ask Doubts Card (Merged) */}
-<Card className="glass-card backdrop-blur-glass border-2 border-secondary/20 shadow-glow">
-  <CardHeader>
-    <CardTitle className="text-2xl flex items-center gap-2">
-      <BookOpen className="h-6 w-6 text-accent" />
-      Study & Ask Doubts
-    </CardTitle>
-  </CardHeader>
-  <CardContent className="space-y-4">
-    <p className="text-muted-foreground">
-      Get help from specialised mentors across 12 different subjects.
-    </p>
-    
-    <div className="flex items-start justify-between gap-2 md:gap-4"> {/* NEW: Reduced gap on mobile for more horizontal space */}
-      <div className="flex flex-wrap gap-1.5 md:gap-2 flex-1 min-w-0"> {/* NEW: Smaller gap, min-w-0 to prevent overflow, flex-row implicit */}
-        <span className="px-2 py-1 md:px-3 md:py-1.5 rounded-full bg-primary/10 text-primary text-xs md:text-sm font-medium whitespace-nowrap flex-shrink-0">Maths</span>
-        <span className="px-2 py-1 md:px-3 md:py-1.5 rounded-full bg-primary/10 text-primary text-xs md:text-sm font-medium whitespace-nowrap flex-shrink-0">Sciences</span>
-        <span className="px-2 py-1 md:px-3 md:py-1.5 rounded-full bg-accent/10 text-accent text-xs md:text-sm font-medium whitespace-nowrap flex-shrink-0">Languages</span>
-        <span className="px-2 py-1 md:px-3 md:py-1.5 rounded-full bg-accent/10 text-accent text-xs md:text-sm font-medium whitespace-nowrap flex-shrink-0">Tech</span>
-        <span className="px-2 py-1 md:px-3 md:py-1.5 rounded-full bg-primary/10 text-primary text-xs md:text-sm font-medium whitespace-nowrap flex-shrink-0">Arts</span>
-        <span className="px-2 py-1 md:px-3 md:py-1.5 rounded-full bg-accent/10 text-accent text-xs md:text-sm font-medium whitespace-nowrap flex-shrink-0">Humanities</span>
-        <span className="px-2 py-1 md:px-3 md:py-1.5 rounded-full bg-primary/10 text-primary text-xs md:text-sm font-medium whitespace-nowrap flex-shrink-0">Skills</span>
-        <span className="px-2 py-1 md:px-3 md:py-1.5 rounded-full bg-primary/10 text-primary text-xs md:text-sm font-medium whitespace-nowrap flex-shrink-0">etc</span>
-      </div>
-      
-      <div className="flex flex-col items-end gap-2 flex-shrink-0">
-        <div className="flex items-center gap-2">
-          <div className="flex -space-x-2">
-            {mentorImages.map((img, idx) => (
-              <img
-                key={idx}
-                src={img}
-                alt={`Mentor ${idx + 1}`}
-                className="w-10 h-10 rounded-full border-2 border-background object-cover hover:scale-110 transition-transform cursor-pointer"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigate("/subjects");
-                }}
-              />
-            ))}
-          </div>
-          <span className="text-xs text-muted-foreground font-medium">+more</span>
-          <div className="flex items-center gap-1.5 text-xs">
-            <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-            <span className="text-green-500 font-medium">Online</span>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <Button
-      onClick={(e) => {
-        e.stopPropagation();
-        setIsAskDoubtModalOpen(true);
-      }}
-      className="w-full bg-gradient-to-r from-primary to-accent hover:shadow-glow transition-all"
-    >
-      Ask Doubt
-    </Button>
-  </CardContent>
-</Card>
+        <Card className="glass-card backdrop-blur-glass border-2 border-secondary/20 shadow-glow">
+          <CardHeader>
+            <CardTitle className="text-2xl flex items-center gap-2">
+              <BookOpen className="h-6 w-6 text-accent" />
+              Study & Ask Doubts
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-muted-foreground">
+              Get help from specialised mentors across 12 different subjects.
+            </p>
+            
+            {/* 
+               CHANGE MADE HERE: 
+               1. Changed 'flex' to 'flex flex-col sm:flex-row' 
+                  - This stacks items vertically on mobile (flex-col) 
+                  - Puts them side-by-side on larger screens (sm:flex-row)
+            */}
+            <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
+              
+              {/* Tags Container: Added w-full to ensure it uses space on mobile */}
+              <div className="flex flex-wrap gap-2 flex-1 w-full">
+                <span className="px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-medium whitespace-nowrap">Maths</span>
+                <span className="px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-medium whitespace-nowrap">Sciences</span>
+                <span className="px-3 py-1.5 rounded-full bg-accent/10 text-accent text-xs font-medium whitespace-nowrap">Languages</span>
+                <span className="px-3 py-1.5 rounded-full bg-accent/10 text-accent text-xs font-medium whitespace-nowrap">Tech</span>
+                <span className="px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-medium whitespace-nowrap">Arts</span>
+                <span className="px-3 py-1.5 rounded-full bg-accent/10 text-accent text-xs font-medium whitespace-nowrap">Humanities</span>
+                <span className="px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-medium whitespace-nowrap">Skills</span>
+                <span className="px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-medium whitespace-nowrap">etc</span>
+              </div>
+              
+              {/* Mentor Images Container: Added w-full sm:w-auto to handle alignment */}
+              <div className="flex flex-col sm:items-end items-start gap-2 flex-shrink-0 w-full sm:w-auto">
+                <div className="flex items-center gap-2">
+                  <div className="flex -space-x-2">
+                    {mentorImages.map((img, idx) => (
+                      <img
+                        key={idx}
+                        src={img}
+                        alt={`Mentor ${idx + 1}`}
+                        className="w-10 h-10 rounded-full border-2 border-background object-cover hover:scale-110 transition-transform cursor-pointer"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate("/subjects");
+                        }}
+                      />
+                    ))}
+                  </div>
+                  <span className="text-xs text-muted-foreground font-medium">+more</span>
+                  <div className="flex items-center gap-1.5 text-xs">
+                    <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                    <span className="text-green-500 font-medium">Online</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <Button
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsAskDoubtModalOpen(true);
+              }}
+              className="w-full bg-gradient-to-r from-primary to-accent hover:shadow-glow transition-all"
+            >
+              Ask Doubt
+            </Button>
+          </CardContent>
+        </Card>
 
         {/* Test Yourself Card */}
         <Card className="glass-card backdrop-blur-glass border-2 border-primary/20 shadow-glow hover:scale-[1.02] transition-all">
