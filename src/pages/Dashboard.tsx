@@ -147,6 +147,7 @@ const Dashboard = () => {
                 <span className="px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-medium">Arts</span>
                 <span className="px-3 py-1.5 rounded-full bg-accent/10 text-accent text-xs font-medium">Humanities</span>
                 <span className="px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-medium">Skills</span>
+                <span className="px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-medium">etc</span>
               </div>
               
               <div className="flex flex-col items-end gap-2 flex-shrink-0">
