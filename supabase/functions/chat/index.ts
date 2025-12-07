@@ -36,7 +36,6 @@ Key responsibilities:
 Always be encouraging and make learning enjoyable!`;
 
     // Transform messages to Gemini format
-    // Gemini expects roles: 'user' or 'model' (not 'assistant')
     const validMessages = messages.map((msg: any) => ({
       role: msg.role === 'assistant' ? 'model' : 'user',
       parts: [{ text: msg.content }]
@@ -44,7 +43,7 @@ Always be encouraging and make learning enjoyable!`;
 
     // Call Google Gemini API Direct
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lite-latest:generateContent?key=${GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite-preview-09-2025:generateContent?key=${GEMINI_API_KEY}`,
       {
         method: 'POST',
         headers: {
@@ -57,7 +56,14 @@ Always be encouraging and make learning enjoyable!`;
           },
           generationConfig: {
             temperature: 0.7,
-            maxOutputTokens: 1024,
+            // Maximum total tokens for output (safety net for thinking + answer)
+            maxOutputTokens: 8192, 
+            
+            // ⭐️ CHANGE: Added Thinking Configuration with Fixed 4096 Budget
+            thinkingConfig: {
+              includeThoughts: false,
+              thinkingBudget: 4096      // Fixed Budget: Model dedicates 4096 tokens for reasoning
+            }
           }
         }),
       }
@@ -120,4 +126,5 @@ function getMentorStyle(mentorId: string): string {
   };
 
   return styles[mentorId] || 'Supportive and clear. You break down concepts step by step.';
-      }
+          }
+        
