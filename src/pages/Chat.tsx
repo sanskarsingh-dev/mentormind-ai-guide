@@ -235,7 +235,13 @@ const Chat = () => {
               }`}
             >
               {/* CONTENT AREA - REPLACED WITH MARKDOWN PARSER */}
-              <div className={`${message.role === 'assistant' ? 'pb-6' : ''}`}>
+              <div
+  className={`
+    ${message.role === 'assistant' ? 'pb-6' : ''}
+    overflow-x-auto
+    max-w-full
+  `}
+>
                 <ReactMarkdown
                   components={{
                     // Style specific elements
