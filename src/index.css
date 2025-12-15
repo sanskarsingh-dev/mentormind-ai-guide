@@ -198,4 +198,13 @@ All colors MUST be HSL.
   .safe-area-bottom {
     padding-bottom: max(env(safe-area-inset-bottom), 0.5rem);
   }
+/* ===============================
+   MathJax overflow fix for chat
+   =============================== */
+mjx-container {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  display: block;
+      }
 }
