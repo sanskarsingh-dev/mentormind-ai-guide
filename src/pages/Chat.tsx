@@ -245,7 +245,18 @@ const Chat = () => {
                 <ReactMarkdown
                   components={{
                     // Style specific elements
-                    p: ({node, ...props}) => <p className={`mb-2 leading-relaxed whitespace-pre-wrap ${message.role === 'user' ? 'text-white' : 'text-foreground'}`} {...props} />,
+                    p: ({node, ...props}) => (
+  <p
+    className={`
+      mb-2 leading-relaxed
+      whitespace-pre-wrap
+      break-words
+      max-w-full
+      ${message.role === 'user' ? 'text-white' : 'text-foreground'}
+    `}
+    {...props}
+  />
+),
                     strong: ({node, ...props}) => <span className="font-bold" {...props} />,
                     em: ({node, ...props}) => <span className="italic" {...props} />,
                     h1: ({node, ...props}) => <h1 className="text-xl font-bold mt-4 mb-2" {...props} />,
