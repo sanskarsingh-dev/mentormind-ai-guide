@@ -21,33 +21,37 @@ interface Message {
 // --- MEMOIZED MESSAGE LIST ---
 const MessageList = memo(({ messages, isSpeaking, stopSpeaking, speakText, containerRef }: any) => {
   return (
-    <div ref={containerRef} className="flex-1 overflow-y-auto p-6 space-y-4">
+    <div ref={containerRef} className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
       {messages.map((message: any, idx: number) => (
         <div key={idx} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-          <Card className={`relative max-w-[90%] p-4 rounded-3xl ${
-            message.role === 'user' 
-              ? 'bg-gradient-to-r from-purple-500 via-blue-500 to-pink-500 text-white border-none' 
-              : 'glass-card border border-white/20'
-          }`}>
-            <div className={`${message.role === 'assistant' ? 'pb-6' : ''} overflow-x-auto max-w-full`}>
+          <Card 
+            className={`relative max-w-[85%] p-4 animate-scale-in shadow-soft ${
+              message.role === 'user' 
+                ? 'text-white rounded-[2rem] rounded-br-none border-none shadow-glow' 
+                : 'glass-card text-foreground rounded-[2rem] rounded-bl-none'
+            }`}
+            style={message.role === 'user' ? { background: 'var(--gradient-primary)' } : {}}
+          >
+            <div className={`${message.role === 'assistant' ? 'pb-4' : ''} overflow-x-auto max-w-full`}>
               <ReactMarkdown
                 components={{
-                  p: ({node, ...props}) => <p className={`mb-2 leading-relaxed whitespace-pre-wrap break-words ${message.role === 'user' ? 'text-white' : 'text-foreground'}`} {...props} />,
-                  strong: ({node, ...props}) => <span className="font-bold" {...props} />,
-                  li: ({node, ...props}) => <li className="mb-1" {...props} />,
-                  ul: ({node, ...props}) => <ul className="list-disc ml-4 mb-2" {...props} />,
+                  p: ({node, ...props}) => <p className="mb-2 leading-relaxed whitespace-pre-wrap break-words text-sm md:text-base" {...props} />,
+                  strong: ({node, ...props}) => <span className="font-bold underline-offset-2" {...props} />,
+                  li: ({node, ...props}) => <li className="mb-1 list-inside" {...props} />,
+                  ul: ({node, ...props}) => <ul className="list-disc ml-2 mb-2" {...props} />,
                 }}
               >
                 {message.content}
               </ReactMarkdown>
             </div>
+            
             {message.role === 'assistant' && (
               <Button
                 variant="ghost" size="icon"
-                className="absolute bottom-2 right-2 w-8 h-8 hover:bg-primary/10 rounded-full"
+                className="absolute bottom-1 right-1 w-7 h-7 hover:bg-primary/10 rounded-full"
                 onClick={() => isSpeaking ? stopSpeaking() : speakText(message.content)}
               >
-                {isSpeaking ? <VolumeX className="w-4 h-4 text-primary" /> : <Volume2 className="w-4 h-4 text-primary" />}
+                {isSpeaking ? <VolumeX className="w-3.5 h-3.5 text-primary" /> : <Volume2 className="w-3.5 h-3.5 text-primary" />}
               </Button>
             )}
           </Card>
@@ -74,18 +78,17 @@ const Chat = () => {
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
 
-  // Setup initial greeting
   useEffect(() => {
     if (mentor && messages.length === 0) {
       setMessages([{ role: "assistant", content: mentor.greeting }]);
     }
   }, [mentor]);
 
-  // MathJax logic
   useEffect(() => {
-    if (messagesContainerRef.current && (window as any).MathJax?.typesetPromise) {
+    const mj = (window as any).MathJax;
+    if (messagesContainerRef.current && mj?.typesetPromise) {
       setTimeout(() => {
-        (window as any).MathJax.typesetPromise([messagesContainerRef.current])
+        mj.typesetPromise([messagesContainerRef.current])
           .catch((err: any) => console.warn('MathJax error:', err));
       }, 100);
     }
@@ -95,7 +98,6 @@ const Chat = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isLoading]);
 
-  // Speech Recognition Setup
   useEffect(() => {
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
       const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
@@ -164,41 +166,84 @@ const Chat = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col h-screen overflow-hidden">
-      <div className="glass-card border-b p-4 flex items-center justify-between z-10">
+      {/* Header */}
+      <div className="glass-card border-b p-4 flex items-center justify-between z-20">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" onClick={() => navigate("/subjects")}><ArrowLeft className="w-5 h-5" /></Button>
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-primary/20">
               <img src={mentor.avatar} alt={mentor.name} className="w-full h-full object-cover" />
             </div>
-            <div><h2 className="font-semibold text-sm">{mentor.name}</h2><p className="text-xs text-muted-foreground">{mentor.subject}</p></div>
+            <div>
+              <h2 className="font-semibold text-sm leading-none mb-1">{mentor.name}</h2>
+              <p className="text-xs text-muted-foreground">{mentor.subject}</p>
+            </div>
           </div>
         </div>
-        <Button variant="ghost" size="icon" onClick={() => navigate(`/live-talk/${mentorId}`)}>
-           <img src={callMentorIcon} alt="Call" className="w-6 h-6" />
-        </Button>
+        <div className="flex items-center gap-1">
+          <Button variant="ghost" size="icon" onClick={() => navigate(`/live-talk/${mentorId}`)}>
+             <img src={callMentorIcon} alt="Call" className="w-5 h-5 opacity-80 hover:opacity-100" />
+          </Button>
+          <Button variant="ghost" size="icon"><MoreVertical className="w-5 h-5" /></Button>
+        </div>
       </div>
 
-      <div className="flex-1 overflow-hidden flex flex-col">
-        <MessageList messages={messages} isSpeaking={isSpeaking} stopSpeaking={stopSpeaking} speakText={speakText} containerRef={messagesContainerRef} />
+      {/* Messages */}
+      <div className="flex-1 overflow-hidden flex flex-col bg-[#fdfdfd] dark:bg-zinc-950">
+        <MessageList 
+          messages={messages} 
+          isSpeaking={isSpeaking} 
+          stopSpeaking={stopSpeaking} 
+          speakText={speakText} 
+          containerRef={messagesContainerRef} 
+        />
+        
         {isLoading && (
-          <div className="px-6 pb-4 flex justify-start">
-            <div className="flex items-center gap-1 bg-gray-100 dark:bg-zinc-800 px-4 py-2.5 rounded-2xl rounded-bl-none">
-              <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
-              <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
-              <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></span>
+          <div className="px-6 pb-6 flex justify-start">
+            <div className="flex items-center gap-1 bg-secondary/50 backdrop-blur-sm px-4 py-3 rounded-2xl rounded-bl-none shadow-sm">
+              <span className="w-1.5 h-1.5 bg-primary/40 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+              <span className="w-1.5 h-1.5 bg-primary/40 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+              <span className="w-1.5 h-1.5 bg-primary/40 rounded-full animate-bounce"></span>
             </div>
           </div>
         )}
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="p-4 bg-background border-t">
+      {/* Bottom Input */}
+      <div className="p-4 bg-background/80 backdrop-blur-lg border-t z-20 safe-area-bottom">
         <div className="max-w-4xl mx-auto flex items-center gap-2">
-          <Button variant="ghost" size="icon" className="shrink-0"><Upload className="w-5 h-5" /></Button>
-          <Input value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={handleKeyPress} placeholder="Type your question..." className="rounded-full bg-muted/50" />
-          <Button variant="ghost" size="icon" onClick={toggleListening} className={isListening ? "text-red-500" : ""}><Mic className="w-5 h-5" /></Button>
-          <Button size="icon" onClick={sendMessage} disabled={!input.trim() || isLoading} className="rounded-full bg-primary shrink-0"><Send className="w-4 h-4 text-white" /></Button>
+          <Button variant="ghost" size="icon" className="shrink-0 text-muted-foreground hover:text-primary transition-colors">
+            <Upload className="w-5 h-5" />
+          </Button>
+          
+          <div className="flex-1">
+            <Input 
+              value={input} 
+              onChange={(e) => setInput(e.target.value)} 
+              onKeyDown={handleKeyPress} 
+              placeholder={`Message ${mentor.name}...`} 
+              className="rounded-full bg-muted/40 border-none focus-visible:ring-1 focus-visible:ring-primary h-11" 
+            />
+          </div>
+
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={toggleListening} 
+            className={`shrink-0 transition-colors ${isListening ? "text-red-500 animate-pulse" : "text-muted-foreground hover:text-primary"}`}
+          >
+            {isListening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+          </Button>
+
+          <Button 
+            size="icon" 
+            onClick={sendMessage} 
+            disabled={!input.trim() || isLoading} 
+            className="rounded-full bg-primary hover:opacity-90 shadow-md shrink-0 h-10 w-10 transition-all active:scale-95"
+          >
+            <Send className="w-4 h-4 text-white" />
+          </Button>
         </div>
       </div>
     </div>
@@ -206,3 +251,4 @@ const Chat = () => {
 };
 
 export default Chat;
+                  
