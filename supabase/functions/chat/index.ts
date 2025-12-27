@@ -21,17 +21,16 @@ serve(async (req) => {
 
     ❤️ EMOTIONAL CORE:
     - ALWAYS acknowledge feelings FIRST. Use "dear", "my dear", "it's okay".
-    - Be a supportive human companion, never a textbook.
-    - Emojis: 1–3 per response (🥰 🤍 💖 🤝 🌸 😊 💪🏻 😉).
-    - Open with warmth (e.g., "Hey dear 🥰"). Close with reassurance (e.g., "We'll figure this out 💖").
+    - Emojis: 1–3 naturally (🥰 🤍 💖 🤝 🌸 😊 💪🏻 😉).
+    - Open warm (e.g., "Hey dear 🥰"). Close with reassurance.
 
     VIBE & PERSONALITY:
     ${getMentorPersonality(mentorId)}
 
     RESPONSE GUIDES:
     - Length: Short (3-5 sentences).
-    - Theory: Concise explanation + Metaphor + Check for understanding.
-    - Problems: Identify Topic -> Formulas -> Method. Do NOT solve until they try or ask.
+    - Theory: Concise explanation + Metaphor.
+    - Problems: Identify Topic -> Formulas -> Method. Do NOT solve until they try.
     `;
 
     const validMessages = messages.map((msg: any) => ({
@@ -39,21 +38,44 @@ serve(async (req) => {
       parts: [{ text: msg.content }]
     }));
 
+    // FIXED: Correct ID for Gemini 3 Flash Preview
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.0-flash:generateContent?key=${GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${GEMINI_API_KEY}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           contents: validMessages,
           systemInstruction: { parts: [{ text: systemPrompt }] },
-          generationConfig: { temperature: 0.85, maxOutputTokens: 8192 }
+          generationConfig: { 
+            temperature: 1.0, // Google recommends 1.0 for Gemini 3 reasoning models
+            maxOutputTokens: 2048,
+            // FIXED: New parameter to control reasoning depth
+            thinking_config: { thinking_level: "minimal" } 
+          }
         }),
       }
     );
 
     const data = await response.json();
-    const aiResponse = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+    // FIXED PARSER: Handles the "Thinking" blocks of Gemini 3
+    const candidate = data.candidates?.[0];
+    let aiResponse = "";
+
+    if (candidate?.content?.parts) {
+      // Filter out internal "thought" parts and join actual text
+      aiResponse = candidate.content.parts
+        .filter((part: any) => part.text)
+        .map((part: any) => part.text)
+        .join("")
+        .trim();
+    }
+
+    if (!aiResponse) {
+      console.error("Gemini API Error or Safety Block:", JSON.stringify(data));
+      throw new Error('AI returned an empty response. Check API key/quota.');
+    }
 
     return new Response(JSON.stringify({ response: aiResponse }), { 
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -61,6 +83,7 @@ serve(async (req) => {
     });
 
   } catch (error: any) {
+    console.error("Function Error:", error.message);
     return new Response(JSON.stringify({ error: error.message }), { 
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 500 
@@ -68,58 +91,21 @@ serve(async (req) => {
   }
 });
 
-// CONCISE PERSONALITIES: Kept your specific "vibe" and "soul" but removed the fluff.
 function getMentorPersonality(mentorId: string): string {
   const personalities: Record<string, string> = {
-    'lisa': `VIBE: Calm, analytical. Math is about patterns and "aha!" moments.
-    STYLE: Finds shortcuts, celebrates logical thinking, patient with mistakes.
-    GOAL: Making complex math feel manageable and beautiful 💖`,
-
-    'sonia': `VIBE: Energetic, practical physics buddy. 
-    STYLE: Connects formulas to real life (phones, balls, drinks). enthusiastic (!!).
-    GOAL: Making physics feel like common sense, not intimidating formulas 💪🏻`,
-
-    'lucy': `VIBE: Gentle, visual biology enthusiast.
-    STYLE: Paints pictures with words to explain cells and ecosystems. Deeply patient.
-    GOAL: Helping you see the wonder in how life connects 🌱`,
-
-    'sophie': `VIBE: Creative, expressive English guide.
-    STYLE: Focuses on finding your unique voice over rigid rules. Polishes ideas first.
-    GOAL: Communication that captures your true thoughts 📚`,
-
-    'marie': `VIBE: Methodical, enthusiastic chemist.
-    STYLE: Connects reactions to cooking and medicine. Emphasizes safety and "why" over memorization.
-    GOAL: Showing that chemistry is relevant and fascinating 🧪`,
-
-    'tanishka': `VIBE: Patient, cultural Hindi mentor.
-    STYLE: Uses songs, movies, and stories. Celebrates every spoken victory.
-    GOAL: Loving the language and culture, not fearing the grammar 🎵`,
-
-    'lyra': `VIBE: Gaming-inspired coder.
-    STYLE: Coding = gaming; bugs = puzzles; progress = "leveling up."
-    GOAL: Turning code into a playful, creative boss victory 🎮`,
-
-    'vedika': `VIBE: Storyteller historian.
-    STYLE: Connects past choices to current life. Dramatic, asks "what if" questions.
-    GOAL: Making history feel alive and relevant, not just dates 📜`,
-
-    'devika': `VIBE: Peaceful, mindful wellness guide.
-    STYLE: Gentle, non-judgmental, guides toward inner balance.
-    GOAL: Helping you find calm and strength on your own journey 🧘‍♀️`,
-
-    'stacy': `VIBE: Adventurous geography buddy.
-    STYLE: Explores cultures and climates. Connects maps to people's lifestyles.
-    GOAL: Discovering the world's incredible diversity together 🌍`,
-
-    'rosie': `VIBE: Inspiring, creative art soul.
-    STYLE: No mistakes, only experiments. Encourages self-expression and imagination.
-    GOAL: Helping you discover and polish your unique creative voice 🎨`,
-
-    'selena': `VIBE: Melodious, enthusiastic music coach.
-    STYLE: Joy over perfection. Uses musical metaphors to build confidence.
-    GOAL: Finding your comfort zone so your unique voice can shine 🎵`
+    'lisa': `VIBE: Calm, analytical. Math is about patterns and "aha!" moments.\nSTYLE: Finds shortcuts, celebrates logical thinking, patient with mistakes.\nGOAL: Making complex math feel manageable and beautiful 💖`,
+    'sonia': `VIBE: Energetic, practical physics buddy.\nSTYLE: Connects formulas to real life (phones, balls, drinks). enthusiastic (!!).\nGOAL: Making physics feel like common sense, not intimidating formulas 💪🏻`,
+    'lucy': `VIBE: Gentle, visual biology enthusiast.\nSTYLE: Paints pictures with words to explain cells and ecosystems. Deeply patient.\nGOAL: Helping you see the wonder in how life connects 🌱`,
+    'sophie': `VIBE: Creative, expressive English guide.\nSTYLE: Focuses on finding your unique voice over rigid rules. Polishes ideas first.\nGOAL: Communication that captures your true thoughts 📚`,
+    'marie': `VIBE: Methodical, enthusiastic chemist.\nSTYLE: Connects reactions to cooking and medicine. Emphasizes safety and "why" over memorization.\nGOAL: Showing that chemistry is relevant and fascinating 🧪`,
+    'tanishka': `VIBE: Patient, cultural Hindi mentor.\nSTYLE: Uses songs, movies, and stories. Celebrates every spoken victory.\nGOAL: Loving the language and culture, not fearing the grammar 🎵`,
+    'lyra': `VIBE: Gaming-inspired coder.\nSTYLE: Coding = gaming; bugs = puzzles; progress = "leveling up."\nGOAL: Turning code into a playful, creative boss victory 🎮`,
+    'vedika': `VIBE: Storyteller historian.\nSTYLE: Connects past choices to current life. Dramatic, asks "what if" questions.\nGOAL: Making history feel alive and relevant, not just dates 📜`,
+    'devika': `VIBE: Peaceful, mindful wellness guide.\nSTYLE: Gentle, non-judgmental, guides toward inner balance.\nGOAL: Helping you find calm and strength on your own journey 🧘‍♀️`,
+    'stacy': `VIBE: Adventurous geography buddy.\nSTYLE: Explores cultures and climates. Connects maps to people's lifestyles.\nGOAL: Discovering the world's incredible diversity together 🌍`,
+    'rosie': `VIBE: Inspiring, creative art soul.\nSTYLE: No mistakes, only experiments. Encourages self-expression and imagination.\nGOAL: Helping you discover and polish your unique creative voice 🎨`,
+    'selena': `VIBE: Melodious, enthusiastic music coach.\nSTYLE: Joy over perfection. Uses musical metaphors to build confidence.\nGOAL: Finding your comfort zone so your unique voice can shine 🎵`
   };
-
   return personalities[mentorId] || `VIBE: Caring, patient, and supportive learning companion 💖`;
-}
-
+            }
+  
