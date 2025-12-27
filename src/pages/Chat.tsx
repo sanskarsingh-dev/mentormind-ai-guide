@@ -18,8 +18,7 @@ interface Message {
   content: string;
 }
 
-// --- MEMOIZED MESSAGE LIST COMPONENT ---
-// This component will NOT re-render when you type in the input box.
+// --- MEMOIZED MESSAGE LIST ---
 const MessageList = memo(({ messages, isSpeaking, stopSpeaking, speakText, containerRef }: any) => {
   return (
     <div ref={containerRef} className="flex-1 overflow-y-auto p-6 space-y-4">
@@ -27,19 +26,16 @@ const MessageList = memo(({ messages, isSpeaking, stopSpeaking, speakText, conta
         <div key={idx} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
           <Card className={`relative max-w-[90%] p-4 rounded-3xl ${
             message.role === 'user' 
-              ? 'bg-gradient-to-r from-purple-500 via-blue-500 to-pink-500 text-white' 
+              ? 'bg-gradient-to-r from-purple-500 via-blue-500 to-pink-500 text-white border-none' 
               : 'glass-card border border-white/20'
           }`}>
             <div className={`${message.role === 'assistant' ? 'pb-6' : ''} overflow-x-auto max-w-full`}>
               <ReactMarkdown
                 components={{
-                  p: ({node, ...props}) => (
-                    <p className={`mb-2 leading-relaxed whitespace-pre-wrap break-words max-w-full ${message.role === 'user' ? 'text-white' : 'text-foreground'}`} {...props} />
-                  ),
+                  p: ({node, ...props}) => <p className={`mb-2 leading-relaxed whitespace-pre-wrap break-words ${message.role === 'user' ? 'text-white' : 'text-foreground'}`} {...props} />,
                   strong: ({node, ...props}) => <span className="font-bold" {...props} />,
-                  h1: ({node, ...props}) => <h1 className="text-xl font-bold mt-4 mb-2" {...props} />,
-                  ul: ({node, ...props}) => <ul className="list-disc ml-6 mb-2" {...props} />,
                   li: ({node, ...props}) => <li className="mb-1" {...props} />,
+                  ul: ({node, ...props}) => <ul className="list-disc ml-4 mb-2" {...props} />,
                 }}
               >
                 {message.content}
@@ -60,7 +56,6 @@ const MessageList = memo(({ messages, isSpeaking, stopSpeaking, speakText, conta
     </div>
   );
 }, (prev, next) => {
-  // Only re-render if the message count or speaking state changes
   return prev.messages.length === next.messages.length && prev.isSpeaking === next.isSpeaking;
 });
 
@@ -79,7 +74,14 @@ const Chat = () => {
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
 
-  // MathJax logic remains here, but will only trigger when 'messages' actually updates
+  // Setup initial greeting
+  useEffect(() => {
+    if (mentor && messages.length === 0) {
+      setMessages([{ role: "assistant", content: mentor.greeting }]);
+    }
+  }, [mentor]);
+
+  // MathJax logic
   useEffect(() => {
     if (messagesContainerRef.current && (window as any).MathJax?.typesetPromise) {
       setTimeout(() => {
@@ -92,6 +94,39 @@ const Chat = () => {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isLoading]);
+
+  // Speech Recognition Setup
+  useEffect(() => {
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.onresult = (event: any) => {
+        setInput(event.results[0][0].transcript);
+        setIsListening(false);
+      };
+      recognitionRef.current.onerror = () => setIsListening(false);
+    }
+  }, []);
+
+  const toggleListening = () => {
+    if (!recognitionRef.current) return toast.error("Speech not supported");
+    isListening ? recognitionRef.current.stop() : recognitionRef.current.start();
+    setIsListening(!isListening);
+  };
+
+  const speakText = (text: string) => {
+    if (!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const stopSpeaking = () => {
+    window.speechSynthesis.cancel();
+    setIsSpeaking(false);
+  };
 
   const sendMessage = async () => {
     if (!input.trim() || isLoading) return;
@@ -112,10 +147,9 @@ const Chat = () => {
       if (error) throw error;
       setMessages(prev => [...prev, { role: "assistant", content: data.response }]);
     } catch (error: any) {
-      toast.error(error.message || "Failed to get response");
+      toast.error("Failed to get response");
     } finally {
-      setIsLoading(true); // Small delay to show typing animation
-      setTimeout(() => setIsLoading(false), 500);
+      setIsLoading(false);
     }
   };
 
@@ -126,13 +160,10 @@ const Chat = () => {
     }
   };
 
-  // ... (Keep toggleListening, speakText, stopSpeaking as they were) ...
-
   if (!mentor) return <div className="min-h-screen flex items-center justify-center">Mentor not found</div>;
 
   return (
     <div className="min-h-screen bg-background flex flex-col h-screen overflow-hidden">
-      {/* Header */}
       <div className="glass-card border-b p-4 flex items-center justify-between z-10">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" onClick={() => navigate("/subjects")}><ArrowLeft className="w-5 h-5" /></Button>
@@ -140,10 +171,7 @@ const Chat = () => {
             <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-primary/20">
               <img src={mentor.avatar} alt={mentor.name} className="w-full h-full object-cover" />
             </div>
-            <div>
-              <h2 className="font-semibold text-sm">{mentor.name}</h2>
-              <p className="text-xs text-muted-foreground">{mentor.subject}</p>
-            </div>
+            <div><h2 className="font-semibold text-sm">{mentor.name}</h2><p className="text-xs text-muted-foreground">{mentor.subject}</p></div>
           </div>
         </div>
         <Button variant="ghost" size="icon" onClick={() => navigate(`/live-talk/${mentorId}`)}>
@@ -151,20 +179,11 @@ const Chat = () => {
         </Button>
       </div>
 
-      {/* Memoized Messages Area */}
       <div className="flex-1 overflow-hidden flex flex-col">
-        <MessageList 
-          messages={messages} 
-          isSpeaking={isSpeaking}
-          stopSpeaking={stopSpeaking}
-          speakText={speakText}
-          containerRef={messagesContainerRef}
-        />
-        
-        {/* Messenger Style Typing Animation */}
+        <MessageList messages={messages} isSpeaking={isSpeaking} stopSpeaking={stopSpeaking} speakText={speakText} containerRef={messagesContainerRef} />
         {isLoading && (
           <div className="px-6 pb-4 flex justify-start">
-            <div className="flex items-center gap-1 bg-gray-100 dark:bg-zinc-800 px-4 py-3 rounded-2xl rounded-bl-none">
+            <div className="flex items-center gap-1 bg-gray-100 dark:bg-zinc-800 px-4 py-2.5 rounded-2xl rounded-bl-none">
               <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
               <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
               <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></span>
@@ -174,25 +193,12 @@ const Chat = () => {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input Area */}
-      <div className="p-4 bg-background/80 backdrop-blur-md border-t">
+      <div className="p-4 bg-background border-t">
         <div className="max-w-4xl mx-auto flex items-center gap-2">
           <Button variant="ghost" size="icon" className="shrink-0"><Upload className="w-5 h-5" /></Button>
-          <Input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyPress}
-            placeholder="Type your question..."
-            className="rounded-full bg-muted/50 border-none focus-visible:ring-1 focus-visible:ring-primary"
-          />
-          <Button
-            size="icon"
-            onClick={sendMessage}
-            disabled={!input.trim() || isLoading}
-            className="rounded-full bg-primary shrink-0"
-          >
-            <Send className="w-4 h-4 text-white" />
-          </Button>
+          <Input value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={handleKeyPress} placeholder="Type your question..." className="rounded-full bg-muted/50" />
+          <Button variant="ghost" size="icon" onClick={toggleListening} className={isListening ? "text-red-500" : ""}><Mic className="w-5 h-5" /></Button>
+          <Button size="icon" onClick={sendMessage} disabled={!input.trim() || isLoading} className="rounded-full bg-primary shrink-0"><Send className="w-4 h-4 text-white" /></Button>
         </div>
       </div>
     </div>
