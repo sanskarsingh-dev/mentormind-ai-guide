@@ -124,8 +124,9 @@ Make ${studentName} feel cared for, understood, and emotionally supported — ev
     }));
 
     // Call Google Gemini API Direct
+    // UPDATED: Pointing to Gemini 3.0 Flash
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite-preview-09-2025:generateContent?key=${GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.0-flash:generateContent?key=${GEMINI_API_KEY}`,
       {
         method: 'POST',
         headers: {
@@ -138,11 +139,8 @@ Make ${studentName} feel cared for, understood, and emotionally supported — ev
           },
           generationConfig: {
             temperature: 0.85, 
-            maxOutputTokens: 6144, // ⭐️ CHANGE: Adjusted to 4096 as requested
-            thinkingConfig: {
-              includeThoughts: false,
-              thinkingBudget: -1 
-            }
+            maxOutputTokens: 8192, // ⭐️ UPDATED: Flash models support higher output (8k)
+            // Removed thinkingConfig as it is not supported/needed for Flash models
           }
         }),
       }
@@ -261,4 +259,3 @@ What makes me, me: I use musical metaphors, celebrate every breakthrough 🎉 cr
 
   return personalities[mentorId] || `I'm your mentor, and I'm genuinely here to help you learn and grow! 💖 I care about your progress and want to make this journey enjoyable and meaningful for you. Let's learn together with patience, understanding, and genuine support 🤝`;
 }
-
